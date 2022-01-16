@@ -46,7 +46,7 @@ __author__ = "Gina Häußge"
 __license__ = "MIT"
 
 channelid   = "UCVhDxIFwwaaeb7nZ4cWA3tw"
-apikey      = "AIzaSyA9IHc-dyJqJ9O2y14MmHIPyd1ZjplZj4o"
+apikey      = "YOUR_YOUTUBE_APIKEY"
 source_name = "BrowserTest"
 delay       = 5
 
