@@ -1,0 +1,579 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+    <style>
+        body{margin:0; padding:0;background-color:#000;color:#fff}
+        .wrapper{width:99%;height:100%;padding:1% 0 0%;}
+        .stream{width:99%;height:30%;}
+        .timecode{width:99%;height:15%;padding-bottom:4%}
+        .data_REN{width:50%;height:45%;float:left;padding-right:0%}
+        .data2_REN{width:40%;height:45%;float:right;padding-left:5%}
+        .data{width:99%;height:45%;text-align: center;padding:1%}
+        .data2{width:99%;height:45%;text-align: center;padding:1%}
+        .destination_REN{width:99%;height:5%;padding-top:6%}
+        .destination{width:99%}
+
+        .stext{font:bold 4vh/4vh Arial Black, sans-serif;text-align: center;text-transform:uppercase}
+        .ttext{font:400 6vh/6vh Tahoma, sans-serif;text-align: center;text-transform:uppercase}
+        .d1text, .d2text{font:400 2vh/1.5vh Tahoma, sans-serif;margin:0;padding:0;text-transform:uppercase}
+        .d1btext, .d2btext{font:400 3vh/2vh Tahoma, sans-serif;text-transform:uppercase;margin:0;padding:0}
+        .d1text_REN, .d1btext_REN{text-align: right;}
+        .d2text_REN, .d2btext_REN{text-align: left;}
+        .d1text, .d1btext{text-align: center;}
+        .d2text, .d2btext{text-align: center;}
+        .d1textbigger, .d2textbigger{font:400 5vh/5vh Tahoma, sans-serif;margin:0;padding:0;text-transform:uppercase}
+
+        .destext{font:400 2vh/2vh Tahoma, sans-serif;text-align: center;text-transform:uppercase}
+        .glow{ text-shadow: 0 0 10px #272727, 0 0 30px #fc4f4f;}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@4.0.2/dist/obs-websocket.min.js" integrity="sha256-oA5ASMB4zvyMZSk0DAIAzRoSU3Dzk1ZAH48M+/7a5oY=" crossorigin="anonymous"></script>
+    <script>
+        window.addEventListener("load", init, false);
+        var serverip = "127.0.0.1:4444";    // Change the server IP/port here
+        var password = "YOUR_WEBSOCKETS_PASSWORD_HERE";        // Set password here
+        
+        
+        var sessionTimeStart = 0;
+        var needsSessionTimeReset = false;
+        var delayedSceneChangeTimer = undefined;
+
+
+        const obs = new OBSWebSocket();
+
+        function init() {
+            console.log("Trying to connect to obs...");
+            obs.connect({ address: serverip, password: password });
+        }
+
+        obs.on("ConnectionOpened", () => {
+            console.log("OBS Connection opened");
+
+            // Update the destination field
+            updateStreamingDestination();
+			            
+            // Update the destination field
+            updateRecordingDestination();
+            
+            // session time
+            resetSessionTime();
+            updateSessionTime();
+
+						setDroppedFrames(0,0);
+      
+            // StreamStatus event
+            obs.on("StreamStatus", data => {
+                if (data) {
+                    setTimecode(data.streamTimecode);
+
+                    
+                    			// session duration
+                    			//setTimecodeS("OK"+JSON.stringify(data));//(data.recordDuration).toString());
+                    			updateSessionTime();
+
+                    
+                    setStreamDataRate(data.kbitsPerSec);
+                    
+                    setDroppedFrames(data.numDroppedFrames, data.outputSkippedFrames);
+                    
+                    
+
+                    calculateColorStatus(data);
+					// Update text when page is reloaded after the stream was started
+					if (data.streaming === true && document.getElementById("streamstatus").innerHTML === "off") {
+						setLiveTextFormating("red");
+						changeElementContent("streamstatus", "on air");
+					}
+                }
+                setTimeout( () => {
+                    obs.sendCallback("GetStreamingStatus", (err, data) => {
+                        if (data) setTimecode(data.streamTimecode);
+                    });
+                }, 1000);
+            });
+
+            // ProfileChanged event
+            obs.on("ProfileChanged", data => {
+                setTimeout( () => {
+                    updateRecordingDestination();
+                    updateStreamingDestination();
+                }, 1000);
+            });
+
+            // StreamStarting event
+            obs.on("StreamStarting", data => {
+
+                if (data) {
+                    setLiveTextFormating("red");
+                    changeElementContent("streamstatus", "connecting");
+                }
+                updateStreamingDestination();
+            });
+
+            // StreamStarted event
+            obs.on("StreamStarted", data => {
+
+                if (data) {
+                    changeElementContent("streamstatus", "on air");
+                    setTimecode(data.streamTimecode);
+
+            				// session time
+            				resetSessionTime();
+            				updateSessionTime();
+                }
+            });
+
+            // StreamStopping event
+            obs.on("StreamStopping", data => {
+
+                if (data) {
+                    changeElementContent("streamstatus", "disconnecting");
+                    setTimecode(data.streamTimecode);
+                }
+            });
+
+            // StreamStopped event
+            obs.on("StreamStopped", data => {
+
+                if (data) {
+                    setLiveTextFormating("white");
+                    changeElementContent("streamstatus", "off");
+                    setTimeout( () => {
+                        setTimecode("00:00:00.000");
+                        setStreamDataRate(0.0);
+						changeElementColor("streamhealth", "white");
+                    }, 1000);
+                }
+            });
+
+
+
+
+
+
+
+
+            // RecordingStarted event
+            obs.on("RecordingStarted", data => {
+                if (data) {
+                    changeElementContent("recordingstatus", "rec");
+                    setTimecodeR(data.recTimecode);
+                }
+            });
+
+            // RecordingPaused event
+            obs.on("RecordingPaused", data => {
+                if (data) {
+                    changeElementContent("recordingstatus", "paused");
+                    setTimecodeR(data.recTimecode);
+                }
+            });
+
+            // RecordingResumed event
+            obs.on("RecordingResumed", data => {
+                if (data) {
+                    changeElementContent("recordingstatus", "rec");
+                    setTimecodeR(data.recTimecode);
+                }
+            });
+
+            // RecordingStopping event
+            obs.on("RecordingStopping", data => {
+                if (data) {
+                    changeElementContent("recordingstatus", "stopping");
+                    setTimecodeR(data.recTimecode);
+                }
+            });
+
+            // RecordingStopped event
+            obs.on("RecordingStopped", data => {
+                if (data) {
+                    setRecTextFormating("white");
+                    changeElementContent("recordingstatus", "stop");
+                    setTimeout( () => {
+                        setTimecodeR("00:00:00.000");
+                        changeElementContent("currentfps", "00");
+                    }, 1000);
+                }
+                // clear intervall to stop polling
+                if (interval) clearInterval(interval);
+            });
+
+
+            // RecordingStarting event
+            obs.on("RecordingStarting", data => {
+                if (data) {
+                    setRecTextFormating("red");
+                    changeElementContent("recordingstatus", "starting");
+                }
+
+                updateRecordingDestination();
+
+                interval = setInterval( () => {
+                    // get recording timecode
+                    obs.sendCallback("GetRecordingStatus", (err, data) => {
+                        if (data) {
+                        	setTimecodeR(data.recordTimecode);
+                        }
+                    });
+
+                    // get current fps
+                    obs.sendCallback("GetStats", (err, data) => {
+                        if (data) {
+                            changeElementContent("currentfps", Math.round(data.stats.fps));
+                            if (diskspace == 0) {
+                                diskspace = data.stats["free-disk-space"];
+                            } else {
+                                setDiskSpace(data.stats["free-disk-space"], diskspace);
+                            }
+                        }
+                    });
+                }, 1000);
+            });
+            
+            
+            
+            
+            //obs.on("CurrentProgramSceneChanged", data => {
+            // CurrentSceneChanged
+            obs.on("SwitchScenes", data => {
+            //obs.on("ScenesChanged", data => {
+            //alert("Scene change: " + JSON.stringify(data));
+                if (data) {
+                	  // we use a delayed timer on changing scenes to avoid a bug where studio mode triggers a fake change of scene to preview scene before sending change to new program scene
+                		if (delayedSceneChangeTimer !== undefined) {
+                			clearTimeout(delayedSceneChangeTimer);
+                			delayedSceneChangeTimer = undefined;
+                		}
+                    var sceneName = data.sceneName;
+                		delayedSceneChangeTimer = setTimeout(onSceneChange, 500, sceneName);
+                }
+            });
+
+        });
+
+   
+
+
+
+        obs.on("ConnectionClosed", () => {
+            console.log("Connection Closed");
+            setTimeout(init, 2000);
+        });
+
+        obs.on("error", err => {
+            console.log("socket error:", err);
+        });
+        
+        
+        
+        function onSceneChange(sceneName) {
+        	delayedSceneChangeTimer = undefined;
+        	//alert("Delayed scene change to: " + sceneName);
+	        if (sceneName.includes("Title")) {
+  	       	needsSessionTimeReset = true;
+          } else {
+           	if (needsSessionTimeReset) {
+           		needsSessionTimeReset = false;
+           		resetSessionTime();
+           		updateSessionTime();
+           	}
+          }        	
+        }
+
+        
+        // Stuff to make things easier
+        function setLiveTextFormating(color) {
+            const elem = document.getElementById("streamstatus");
+            elem.style.color = color;
+
+            if (color == "red") {
+                elem.classList.add("glow");
+            } else {
+                elem.classList.remove("glow");
+            }
+        }
+
+        function setStreamDataRate(dr) {
+            changeElementContent("streamdatarate", (dr/1000).toFixed(2));
+        }
+
+        function setDroppedFrames(valDropped, valSkipped) {
+            changeElementContent("droppedframes", valDropped.toString() + "&nbsp;-&nbsp;" + valSkipped.toString());
+        }
+
+
+        function setTimecode(tc) {
+            changeElementContent("streamtimecode", trimTimecode(tc));
+        }
+
+        function updateStreamingDestination() {        
+            obs.sendCallback("GetStreamSettings", (err, data) => {
+                const elem = document.getElementById("streamdestination");
+                if (data !== undefined) {
+                    if (data.type == "rtmp_common" && data.settings.service == "YouTube / YouTube Gaming") {
+                        elem.innerHTML = "YouTube";
+                    } else if (data.type == "rtmp_common" && data.settings.hasOwnProperty("service")) {
+                        elem.innerHTML = data.settings.service;
+                    } else if (data.type == "rtmp_custom" && data.settings.hasOwnProperty("server") && data.settings.server != "") {
+                        var url = new URL(data.settings.server.replace("rtmp", "http")).hostname;
+                        elem.innerHTML = url;
+                    } else {
+                        elem.innerHTML = "Nothing?";
+                    }
+                }
+            });
+        }
+
+        // This congestion color calculation was directly translated into javascript from obs-studio source code
+        // https://github.com/obsproject/obs-studio/blob/master/UI/window-basic-status-bar.cpp#L327-L356
+        var lastCongestion = 0.0;
+        function calculateColorStatus(data) {
+            const EPSILON = 0.000100;
+            let congestion = data.strain;
+            let avgCongestion = (congestion + lastCongestion) * 0.5;
+            if (avgCongestion < congestion) avgCongestion = congestion;
+            if (avgCongestion > 1.0) avgCongestion = 1.0;
+            lastCongestion = congestion;
+
+            if (avgCongestion < EPSILON) {
+				changeElementColor("streamhealth", "green");
+            } else if (Math.abs(avgCongestion - 1.0) < EPSILON) {
+				changeElementColor("streamhealth", "red");
+            } else {
+                let red = avgCongestion * 2.0;
+                if (red > 1.0) red = 1.0;
+                red *= 255.0;
+
+                let green = (1.0 - avgCongestion) * 2.0;
+                if (green > 1.0) green = 1.0;
+                green *= 255.0;
+
+				changeElementColor("streamhealth", `rgb(${Math.floor(red)}, ${Math.floor(green)}, 0)`);
+            }
+        }
+
+        // Utils
+        function changeElementContent(id, newContent) {
+            document.getElementById(id).innerHTML = newContent;
+        }
+
+        function changeElementColor(id, color) {
+            document.getElementById(id).style.color = color;
+        }
+
+        function trimTimecode(tc) {
+            return tc.split(".")[0];
+        }
+
+
+
+
+
+
+
+        // Stuff to make things easier
+        function setRecTextFormating(color) {
+            const elem = document.getElementById("recordingstatus");
+            elem.style.color = color;
+
+            if (color == "red") {
+                elem.classList.add("glow");
+            } else {
+                elem.classList.remove("glow");
+            }
+        }
+
+        function setTimecodeR(tc) {
+            changeElementContent("recordingtimecode", trimTimecode(tc));
+        }
+
+        function setDiskSpace(curSpace, allSpace) {
+            curSpace /= 1024;
+            allSpace /= 1024;
+
+            let value = 100 - (curSpace*100)/allSpace;
+            
+            document.getElementById("diskmeter").value = value;
+        }
+
+        function updateRecordingDestination() {        
+            obs.sendCallback("GetRecordingFolder", (err, data) => {
+              if (data !== undefined) {
+            		var rfolder = "";
+            		if (true) {
+            			rfolder = "";
+            		} else {
+            			rfolder = data.recFolder;
+            			rfolder = pathShorten(rfolder, 20, false);
+            		}
+               	changeElementContent("recordingdestination", rfolder);
+            	}
+            }
+           );
+        }
+
+
+
+				function resetSessionTime() {
+					sessionTimeStart = Date.now();
+				}
+				
+				
+				function updateSessionTime() {
+					if (sessionTimeStart==0) {
+						changeElementContent("sessiontimecode", "starting");
+						return;
+					}
+					var dif = Date.now() - sessionTimeStart;
+					var timeStr = toHHMMSS(Math.round(dif/1000.0));
+					//var timeStr = toHHMMSS(dif/1000.0);
+					changeElementContent("sessiontimecode", timeStr);
+				}
+
+
+// see https://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
+				function toHHMMSS(seconds) {
+				    var h, m, s, result='';
+				    // HOURs
+				    h = Math.floor(seconds/3600);
+				    seconds -= h*3600;
+				    if(h){
+				        result = h<10 ? '0'+h+':' : h+':';
+				    }
+				    // MINUTEs
+				    m = Math.floor(seconds/60);
+				    seconds -= m*60;
+				    result += m<10 ? '0'+m+':' : m+':';
+				    // SECONDs
+				    s=seconds%60;
+				    result += s<10 ? '0'+s : s;
+				    return result;
+				}
+
+
+// from https://stackoverflow.com/questions/14308792/how-to-truncate-a-string-containg-a-path-without-touching-the-filename
+				function pathShorten(str, maxLength, removeFilename) {
+				    var splitter = str.indexOf('/')>-1 ? '/' : "\\",
+				        tokens = str.split(splitter), 
+				        removeFilename = !!removeFilename,
+				        maxLength = maxLength || 25,
+				        drive = str.indexOf(':')>-1 ? tokens[0] : "",  
+				        fileName = tokens[tokens.length - 1],
+				        len = removeFilename ? drive.length  : drive.length + fileName.length,    
+				        remLen = maxLength - len - 5, // remove the current lenth and also space for 3 dots and 2 slashes
+				        path, lenA, lenB, pathA, pathB;    
+				    //remove first and last elements from the array
+				    tokens.splice(0, 1);
+				    tokens.splice(tokens.length - 1, 1);
+				    //recreate our path
+				    path = tokens.join(splitter);
+				    //handle the case of an odd length
+				    lenA = Math.ceil(remLen / 2);
+				    lenB = Math.floor(remLen / 2);
+				    //rebuild the path from beginning and end
+				    pathA = path.substring(0, lenA);
+				    pathB = path.substring(path.length - lenB);
+				    path = drive + splitter + pathA + "..." + pathB + splitter ;
+				    path = path + (removeFilename ? "" : fileName); 
+				    //console.log(tokens, maxLength, drive, fileName, len, remLen, pathA, pathB);
+				    return path;
+				}
+
+
+
+
+    </script>
+</head>
+<body>
+<br/>
+
+
+
+
+
+    <div class="wrapper">
+        <div class="record stext" style="color:#ffffff" id="sessionTime">SESSION</div><!--1st Tier-->
+        <div class="timecode ttext" id="sessiontimecode">00:00</div><!--2nd Tier-->
+    </div>
+    
+
+
+<div>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+</div>
+
+
+
+
+    <div class="wrapper">
+        <div class="stream stext" style="color:#ffffff" id="streamstatus">off</div><!--1st Tier-->
+        <div class="timecode ttext" id="streamtimecode">00:00:00</div><!--2nd Tier-->
+
+        <!--Start 3rd Tier, Data Stream Slots-->
+        <div class="data">
+            <p class="d1text">data rate&nbsp;<label style="text-transform:none">Mbs</label>&nbsp;</p>
+            <p class="d1textbigger" id="streamdatarate">0.00</p>
+        </div>
+        
+        <div class="data">
+            <p class="d1text">dropped - skipped&nbsp;</p>
+            <p class="d1textbigger" id="droppedframes">0</p>
+        </div>
+  
+        <!--End 3rd Tier-->
+        <!--Start 3rd Tier, Health Slot right-->
+        <br/>
+        <div class="data2">
+            <p class="d2text">Health</p>
+            <p class="d2btext">
+                <i class="fas fa-chart-bar" style="font-size:7vh;color:white" id="streamhealth"></i><br />
+            </p>
+        </div>
+        <!-- End 3rd Tier right side-->
+
+        <br style="clear:right" />
+        <div class="destination destext" style="text-transform:none" id="streamdestination">NOT&nbsp;CONNECTED</div>
+        <!--5th Tier, destination streamed-->
+    </div>
+
+<div>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+		<br/>
+			<br/>
+</div>
+
+    <div class="wrapper">
+        <div class="record stext" style="color:#ffffff" id="recordingstatus">stop</div><!--1st Tier-->
+        <div class="timecode ttext" id="recordingtimecode">00:00:00</div><!--2nd Tier-->
+        <!--Start 3rd Tier, Data Rec Slots-->
+        <div class="data">
+            <p class="d1text"><i class="fa fa-hdd-o" style="font-size:5vh;"></i>&nbsp;Disk Status</p>
+            <p class="d1btext styled" style="line-height:2vh">
+             <meter min="0" max="100" low="25" high="75" value="90" id="diskmeter"></meter>
+            </p>
+        </div>
+        <!--End 3rd Tier-->
+        <!--Start 3rd Tier, FPS Slot right-->
+        <div class="data2">
+            <p class="d2text" >FPS</p>
+            <p class="d2textbigger" id="currentfps">00</p>
+        </div>
+        <!-- End 3rd Tier right side-->
+
+        <br style="clear:right" />
+        <div class="destination destext" id="recordingdestination">NOT&nbsp;CONNECTED</div><!--5th Tier, destination recorded-->
+    </div>
+
+
+
+</body>
+</html>

@@ -24,10 +24,16 @@ var FlipDown = function () {
       el = "flipdown";
     }
 
-    this.version = "0.3.2jr1";
+    this.version = "0.3.2jr2";
     this.initialised = false;
     this.now = this._getTime();
-    this.epoch = uts;
+
+		if (uts == 0) {
+			this.epoch = this.now;
+		} else {
+	    this.epoch = uts;
+	  }
+	  
     this.countdownEnded = false;
     this.hasEndedCallback = null;
     this.element = document.getElementById(el);
@@ -43,6 +49,11 @@ var FlipDown = function () {
     this.clockValuesAsString = [];
     this.prevClockValuesAsString = [];
     this.opts = this._parseOptions(opt);
+    this.firstCountUpDisplay = true;
+    
+    // ATTN: 1/20/22
+    this.modeCountUp = opt.modeCountUp;
+    this.countUpEndSeconds = opt.countUpEndSeconds;
     
     // ATTN: 1/5/21
     this.rotorGroups = [];
@@ -80,23 +91,43 @@ var FlipDown = function () {
   }, {
     key: "_hasCountdownEnded",
     value: function _hasCountdownEnded() {
-      if (this.epoch - this.now < 0) {
-		  
-		if (!this.countdownEnded) {
-			// ATTN: cleanup
+    	
+			var timerEndCondition = false;
+			// count up mode?
+			if (this.modeCountUp) {
+				// end timer after some amount of time?
+				if (this.countUpEndSeconds && ((this.now - this.epoch) > this.countUpEndSeconds)) {
+					timerEndCondition = true;
+				}
+	    } else {
+	    	if (this.epoch - this.now < 0) {
+	    		timerEndCondition = true;
+	    	}
+	    }
+        
 
-			// ATTN: stop timer?
-			clearInterval(this.countdown);
-			
-			// make something vis
-			var doneEl = document.getElementById("flipdown_done");
-			if (doneEl) {
-				doneEl.style.display = 'block';
-			}
-			
-			// callback to main global -- better way to do this?
-			globalCallbackTimerEnds();
-		}
+      if (timerEndCondition) {
+				if (!this.countdownEnded) {
+					// ATTN: cleanup
+
+					// ATTN: stop timer?
+					clearInterval(this.countdown);
+					
+					// make something vis
+					var doneEl = document.getElementById("flipdown_done");
+					if (doneEl) {
+						doneEl.style.display = 'block';
+					}
+					// hide timer
+					if (true) {
+						var el = this.element;
+						if (el) {
+							el.style.display = 'none';
+						}
+					}
+					// callback to main global -- better way to do this?
+					globalCallbackTimerEnds();
+				}
 		  
         this.countdownEnded = true;
 
@@ -111,6 +142,11 @@ var FlipDown = function () {
         return false;
       }
     }
+
+
+
+
+
   }, {
     key: "_parseOptions",
     value: function _parseOptions(opt) {
@@ -135,17 +171,21 @@ var FlipDown = function () {
     value: function _init() {
       this.initialised = true;
 
-	// ATTN: hide the done message
-	var doneEl = document.getElementById("flipdown_done");
-	if (doneEl) {
-		doneEl.style.display = 'none';
-	}
+			// ATTN: hide the done message?
+			var doneEl = document.getElementById("flipdown_done");
+			if (doneEl) {
+				doneEl.style.display = 'none';
+			}
 
 
       if (this._hasCountdownEnded()) {
         this.daysremaining = 0;
       } else {
-        this.daysremaining = Math.floor((this.epoch - this.now) / 86400).toString().length;
+      	
+      	// ATTN: 1/20/22 - allow count up
+      	//var diff = this.epoch - this.now <= 0 ? 0 : this.epoch - this.now;
+      	var diff = this.epoch - this.now <= 0 ? (this.now - this.epoch) : this.epoch - this.now;
+        this.daysremaining = Math.floor((diff) / 86400).toString().length;
       }
 
       var dayRotorCount = this.daysremaining <= 2 ? 2 : this.daysremaining;
@@ -229,7 +269,11 @@ var FlipDown = function () {
     key: "_tick",
     value: function _tick() {
       this.now = this._getTime();
-      var diff = this.epoch - this.now <= 0 ? 0 : this.epoch - this.now;
+      
+      // ATTN: 1/20/22 - allow count up
+      //var diff = this.epoch - this.now <= 0 ? 0 : this.epoch - this.now;
+      var diff = this.epoch - this.now <= 0 ? (this.now - this.epoch) : this.epoch - this.now;
+
       this.clockValues.d = Math.floor(diff / 86400);
       diff -= this.clockValues.d * 86400;
       this.clockValues.h = Math.floor(diff / 3600);
@@ -270,6 +314,18 @@ var FlipDown = function () {
         });
       }
 
+			function setElHidden(el, isHidden) {
+				// hidden doesnt want to work setting it to false so we have to do it this way
+				if (isHidden) {
+					el.style.display = "none";
+					//el.setAttribute("hidden", "true");
+				} else {
+					el.style.display = "block";
+					//el.setAttribute("hidden", "false");
+				}
+			}
+
+
       function rotorLeafRearFlip() {
         var _this3 = this;
 
@@ -297,24 +353,45 @@ var FlipDown = function () {
       
       
       // ATTN: mouser@donationcoder.com - 1/5/21 - hide 0 leftmost values
-		if (this.clockStrings.d == 0) {
-			var el = this.rotorGroups[0];
-			el.setAttribute("hidden", true);
-			if (this.clockStrings.h == 0) {
-				var el = this.rotorGroups[1];
-				el.setAttribute("hidden", true);
-				if (this.clockStrings.m == 0) {
-					var el = this.rotorGroups[2];
-					el.setAttribute("hidden", true);
-					if (this.clockStrings.s == 0) {
-						var el = this.rotorGroups[3];
-						el.setAttribute("hidden", true);
+			if (this.epoch - this.now <= 0) {
+				// counting up we need to be more intensive here to turn them back on
+				var el;
+				el = this.rotorGroups[0];
+				if (this.clockStrings.d > 0 || this.firstCountUpDisplay) {
+					setElHidden(el, this.clockStrings.d == 0);
+				}
+				el = this.rotorGroups[1];
+				if (this.clockStrings.h > 0 || this.firstCountUpDisplay) {
+					setElHidden(el, this.clockStrings.h == 0);
+				}
+				el = this.rotorGroups[2];
+				if (this.clockStrings.m > 0 || this.firstCountUpDisplay) {
+					setElHidden(el, this.clockStrings.m == 0);
+				}
+				el = this.rotorGroups[3];
+				if (this.clockStrings.s > 0 || this.firstCountUpDisplay) {
+					setElHidden(el, this.clockStrings.s == 0);
+				}
+				this.firstCountUpDisplay = false;
+			} else {
+				if (this.clockStrings.d == 0) {
+					var el = this.rotorGroups[0];
+					setElHidden(el, true);
+					if (this.clockStrings.h == 0) {
+						var el = this.rotorGroups[1];
+						setElHidden(el, true);
+						if (this.clockStrings.m == 0) {
+							var el = this.rotorGroups[2];
+							setElHidden(el, true);
+							if (this.clockStrings.s == 0) {
+								var el = this.rotorGroups[3];
+								setElHidden(el, true);
+							}
+						}
 					}
 				}
-			}
-		}
-      
-      
+      }
+ 
     }
   }]);
 

@@ -25,11 +25,24 @@
   				initDisplayTimerBegin();
   				++goodArgCount;
   			}
+  			
+  			else if (name=="countup") {
+  				var mins = parseInt(value);
+					if (isNaN(mins)) {
+						doShowError("ERROR: countdown value should be specified as an integer (found: '" + value+"').");
+						return;
+					}
+					modeCountUp = true;
+  				setupCountUpTimer(mins);
+  				initDisplayTimerBegin();
+  				++goodArgCount;
+  			}
  
   			else if (name=="starts") {
-					//value should be of the form "DEC 19, 2021 at 11:00pm";
+					//value should be of the form "DEC 19, 2021 at 11:00 pm";
   				// date and time set
 					//alert("ATTN: VALUE = " + value)
+					var ovalue = value;
   				value = value.replace(/\%20/gi," ");
   				value = value.replace(/\./gi,",");
 					//alert("ATTN: VALUE = " + value)
@@ -37,7 +50,7 @@
 					dateString = valArray[0];
 					timeString = valArray[1];
 
-					var bretv = setScheduleTimeAndThumbnailHeaderFromEventDateTime(dateString, timeString);
+					var bretv = setScheduleTimeAndThumbnailHeaderFromEventDateTime(ovalue, dateString, timeString);
 					if (bretv) {
 						setupStartingSoon();
 						++goodArgCount;
@@ -58,16 +71,24 @@
 
 
 
-		function setScheduleTimeAndThumbnailHeaderFromEventDateTime(dateString, timeString) {
+		function setScheduleTimeAndThumbnailHeaderFromEventDateTime(ovalue, dateString, timeString) {
 			// helper function called from index.html
 			// Automatic stuff that shouldn't need changing
 			// schedule countdown timer for a 5 minutes after the scheduled time
-			var dateval = new Date(dateString + " " + timeString);
+			
+			//
+			var dateval;
+			if (dateString=="now") {
+				dateval = Date.now();
+			} else {
+				dateval = new Date(dateString + " " + timeString);
+			}
+			
 			if (isNaN(dateval.getTime())) {
-				doShowError("ERROR: Date time string not understood:\n'" + dateString + " " + timeString + "'\nShould look like 'DEC 19, 2021 at 11:00pm'.");
+				doShowError("ERROR: Date time string not understood:\n'" + ovalue + "'\nDate parsed as: '" + dateString + "' and time parsed as: '" + timeString + "'.\nShould look like 'DEC 19, 2021 at 11:00 pm'.");
 				return false;
 			}
-			scheduleTime = (dateval.getTime() / 1000) + (5*60);
+			scheduleTime = (dateval.getTime() / 1000);// + (5*60);
 			// alert(new Date(scheduleTime*1000).toString())
 			// string to show the date in nice way (removes year, add "at" to time)
 			niceScheduleString = dateString.replace(/\,\s*20\d\d/i,"") + " AT " + timeString;
@@ -122,6 +143,18 @@
 		}
 		
 		
+		
+		function setupCountUpTimer(mins) {
+			resetVars();
+			endTime = (new Date().getTime() / 1000);
+			countUpEndSeconds = mins * 60;
+			headerText = "BREAK IN PROGRESS";
+			secondaryText = "WE WILL BE RIGHT BACK!";
+			// secondaryText = "&nbsp;";
+			showTimer = true;
+			showTertiary = false;
+			initDisplayTimerBegin();
+		}
 
 
 
@@ -140,7 +173,7 @@
 			var goodArgCount = processArgs();
 			if (goodArgCount == 0) {
 				// error
-				doShowError("No valid commandline arguement passed. Should be one of:\nindex.html?countdown=# (e.g. index.html?countdown=5)\nindex.html?starts=date at time (e.g.: 'index.html?starts=DEC 19, 2021 at 11:00pm')");
+				doShowError("No valid commandline arguement passed. Should be one of:\nindex.html?countdown=# (e.g. index.html?countdown=5)\nindex.html?starts=date at time (e.g.: 'index.html?starts=DEC 19, 2021 at 11:00 pm')");
 			}
 		}
 		
@@ -188,7 +221,11 @@
 	  	}
 
 	  	if (showTimer) {
-		  	flipdown = new FlipDown(endTime).start();
+	  		var opts = {
+	  			modeCountUp: modeCountUp,
+	  			countUpEndSeconds: countUpEndSeconds,
+	  			};
+		  	flipdown = new FlipDown(endTime, undefined, opts).start();
 		  } else {
 		  	flipdown = null;
 		  }
@@ -290,6 +327,10 @@
 		var flipdown;
 		var scheduleTime;
 		var endTime;
+		//
+		var modeCountUp = false;
+		var countUpEndSeconds = 300;
+		//
 		var headerText;
 		var mainText;
 		var secondaryText;
