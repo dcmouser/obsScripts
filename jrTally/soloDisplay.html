@@ -18,13 +18,13 @@
 
         .stext{font:bold 4vh/4vh Arial Black, sans-serif;text-align: center;text-transform:uppercase}
         .ttext{font:400 6vh/6vh Tahoma, sans-serif;text-align: center;text-transform:uppercase}
-        .d1text, .d2text{font:400 2vh/1.5vh Tahoma, sans-serif;margin:0;padding:0;text-transform:uppercase}
-        .d1btext, .d2btext{font:400 3vh/2vh Tahoma, sans-serif;text-transform:uppercase;margin:0;padding:0}
+        .d1text, .d2text{font:400 2vh/3vh Tahoma, sans-serif;margin:0;padding:0;text-transform:uppercase}
+        .d1btext, .d2btext{font:400 3vh/4vh Tahoma, sans-serif;text-transform:uppercase;margin:0;padding:0}
         .d1text_REN, .d1btext_REN{text-align: right;}
         .d2text_REN, .d2btext_REN{text-align: left;}
         .d1text, .d1btext{text-align: center;}
         .d2text, .d2btext{text-align: center;}
-        .d1textbigger, .d2textbigger{font:400 5vh/5vh Tahoma, sans-serif;margin:0;padding:0;text-transform:uppercase}
+        .d1textbigger, .d2textbigger{font:400 5vh/4vh Tahoma, sans-serif;margin:0;padding:0;text-transform:uppercase;text-align: center}
 
         .destext{font:400 2vh/2vh Tahoma, sans-serif;text-align: center;text-transform:uppercase}
         .glow{ text-shadow: 0 0 10px #272727, 0 0 30px #fc4f4f;}
@@ -37,9 +37,18 @@
         
         
         var sessionTimeStart = 0;
-        var needsSessionTimeReset = false;
+        var sessionBreakTimeStart = 0;
+        var inSessionBreak = false;
         var delayedSceneChangeTimer = undefined;
+        var diskspace = 0;
+        var sessionOnRecordVsStream = true;
+        var redSessionMs = 1* 60 * 60 * 1000;
+        var flagRedSessionTime = false;
+        
+        // lowercase version of keyword found in any break scene names -- how the tally keeps track of "session" time
+        var breakKeywords = ["title","intro"];
 
+				var interval = undefined;
 
         const obs = new OBSWebSocket();
 
@@ -59,9 +68,7 @@
             
             // session time
             resetSessionTime();
-            updateSessionTime();
 
-						setDroppedFrames(0,0);
       
             // StreamStatus event
             obs.on("StreamStatus", data => {
@@ -70,8 +77,9 @@
 
                     
                     			// session duration
-                    			//setTimecodeS("OK"+JSON.stringify(data));//(data.recordDuration).toString());
-                    			updateSessionTime();
+                    			if (true || !sessionOnRecordVsStream) {
+	                    			updateSessionTime();
+                    			}
 
                     
                     setStreamDataRate(data.kbitsPerSec);
@@ -121,7 +129,6 @@
 
             				// session time
             				resetSessionTime();
-            				updateSessionTime();
                 }
             });
 
@@ -143,7 +150,7 @@
                     setTimeout( () => {
                         setTimecode("00:00:00.000");
                         setStreamDataRate(0.0);
-						changeElementColor("streamhealth", "white");
+												changeElementColor("streamhealth", "white");
                     }, 1000);
                 }
             });
@@ -160,6 +167,8 @@
                 if (data) {
                     changeElementContent("recordingstatus", "rec");
                     setTimecodeR(data.recTimecode);
+            				// session time
+            				resetSessionTime();
                 }
             });
 
@@ -194,7 +203,7 @@
                     changeElementContent("recordingstatus", "stop");
                     setTimeout( () => {
                         setTimecodeR("00:00:00.000");
-                        changeElementContent("currentfps", "00");
+                        changeElementContent("currentfps", "--");
                     }, 1000);
                 }
                 // clear intervall to stop polling
@@ -221,12 +230,23 @@
 
                     // get current fps
                     obs.sendCallback("GetStats", (err, data) => {
+                    	//alert(JSON.stringify(data));
                         if (data) {
+
+                    			// session duration
+                    			if (true || sessionOnRecordVsStream) {
+	                    			updateSessionTime();
+                    			}
+
                             changeElementContent("currentfps", Math.round(data.stats.fps));
-                            if (diskspace == 0) {
-                                diskspace = data.stats["free-disk-space"];
+                            if (true) {
+                            	changeElementContent("diskspacegb", Math.round(data.stats["free-disk-space"] / 1000.0));
                             } else {
-                                setDiskSpace(data.stats["free-disk-space"], diskspace);
+                            	if (diskspace == 0) {
+                                	diskspace = data.stats["free-disk-space"];
+                            	} else {
+                                	setDiskSpace(data.stats["free-disk-space"], diskspace);
+                            	}
                             }
                         }
                     });
@@ -272,16 +292,39 @@
         function onSceneChange(sceneName) {
         	delayedSceneChangeTimer = undefined;
         	//alert("Delayed scene change to: " + sceneName);
-	        if (sceneName.includes("Title")) {
-  	       	needsSessionTimeReset = true;
+        	var isBreakScene = false;
+					var sceneNameLc = sceneName.toLowerCase();
+        	var arrayLength = breakKeywords.length;
+					for (var i = 0; i < arrayLength; i++) {
+						breakKeyword = breakKeywords[i];
+	        	if (sceneNameLc.includes(breakKeyword)) {
+	  	       	isBreakScene = true;
+	  	       	break;
+          	} 
+					}
+					//
+	        if (isBreakScene) {
+	        	if (!inSessionBreak) {
+	        		// first break scene
+  	       		inSessionBreak = true;
+  	       		sessionBreakTimeStart = Date.now();
+  	       		updateSessionTime();
+           		// turn on break info
+           		changeElementHidden("breakSessionInfo",false);
+  	       	}
           } else {
-           	if (needsSessionTimeReset) {
-           		needsSessionTimeReset = false;
+          	// not in a break scene
+           	if (inSessionBreak) {
+           		inSessionBreak = false;
            		resetSessionTime();
-           		updateSessionTime();
+           		// turn off break info
+           		changeElementHidden("breakSessionInfo",true);
            	}
           }        	
         }
+
+        
+        
 
         
         // Stuff to make things easier
@@ -339,9 +382,9 @@
             lastCongestion = congestion;
 
             if (avgCongestion < EPSILON) {
-				changeElementColor("streamhealth", "green");
+							changeElementColor("streamhealth", "green");
             } else if (Math.abs(avgCongestion - 1.0) < EPSILON) {
-				changeElementColor("streamhealth", "red");
+							changeElementColor("streamhealth", "red");
             } else {
                 let red = avgCongestion * 2.0;
                 if (red > 1.0) red = 1.0;
@@ -363,6 +406,22 @@
         function changeElementColor(id, color) {
             document.getElementById(id).style.color = color;
         }
+
+				function changeElementHidden(id, isHidden) {
+					var el = document.getElementById(id);
+					// hidden doesnt want to work setting it to false so we have to do it this way
+					if (isHidden) {
+						el.style.display = "none";
+						//el.setAttribute("hidden", "true");
+					} else {
+						el.style.display = "block";
+						//el.setAttribute("hidden", "false");
+					}
+				}        
+        
+
+
+
 
         function trimTimecode(tc) {
             return tc.split(".")[0];
@@ -394,8 +453,8 @@
             curSpace /= 1024;
             allSpace /= 1024;
 
-            let value = 100 - (curSpace*100)/allSpace;
-            
+            let value = 100.0 - (curSpace*100.0)/allSpace;
+            alert("Space left = " + value.toString() + " cur = "+ curSpace.toString() + " and all = " + allSpace.toString());
             document.getElementById("diskmeter").value = value;
         }
 
@@ -418,19 +477,36 @@
 
 
 				function resetSessionTime() {
+					changeElementContent("sessiontimecode", "00:00");
+					changeElementColor("sessiontimecode", "");
+          changeElementHidden("breakSessionInfo",true);
+          inSessionBreak = false;
 					sessionTimeStart = Date.now();
 				}
 				
 				
 				function updateSessionTime() {
-					if (sessionTimeStart==0) {
-						changeElementContent("sessiontimecode", "starting");
-						return;
+					var dif;
+					if (inSessionBreak) {
+						dif = Date.now() - sessionBreakTimeStart;
+						var timeStr = toHHMMSS(Math.ceil(dif/1000.0));
+						changeElementContent("sessionBreaktimecode", timeStr);
+					} else {
+						dif = Date.now() - sessionTimeStart;
+						if (dif>500) {
+							// tweak
+							dif -=500;
+						}
+						// testing
+						// dif += 60 * 59* 1000;
+				
+						var timeStr = toHHMMSS(Math.floor(dif/1000.0));
+						changeElementContent("sessiontimecode", timeStr);
+						if (dif > redSessionMs && redSessionMs>0 && !flagRedSessionTime) {
+							flagRedSessionTime = true;
+							changeElementColor("sessiontimecode", "red");
+						}
 					}
-					var dif = Date.now() - sessionTimeStart;
-					var timeStr = toHHMMSS(Math.round(dif/1000.0));
-					//var timeStr = toHHMMSS(dif/1000.0);
-					changeElementContent("sessiontimecode", timeStr);
 				}
 
 
@@ -498,11 +574,13 @@
         <div class="record stext" style="color:#ffffff" id="sessionTime">SESSION</div><!--1st Tier-->
         <div class="timecode ttext" id="sessiontimecode">00:00</div><!--2nd Tier-->
     </div>
-    
+    <div class="wrapper" id="breakSessionInfo">
+        <div class="d1text" style="color:#ffffff" id="sessionBreakTime">BREAK</div><!--1st Tier-->
+        <p class="timecode d1textbigger" id="sessionBreaktimecode">00:00</p><!--2nd Tier-->
+    </div>
 
 
 <div>
-	<br/>
 	<br/>
 	<br/>
 	<br/>
@@ -518,36 +596,32 @@
         <!--Start 3rd Tier, Data Stream Slots-->
         <div class="data">
             <p class="d1text">data rate&nbsp;<label style="text-transform:none">Mbs</label>&nbsp;</p>
-            <p class="d1textbigger" id="streamdatarate">0.00</p>
+            <p class="d1textbigger" id="streamdatarate">--</p>
         </div>
         
         <div class="data">
             <p class="d1text">dropped - skipped&nbsp;</p>
-            <p class="d1textbigger" id="droppedframes">0</p>
+            <p class="d1textbigger" id="droppedframes">--</p>
         </div>
   
         <!--End 3rd Tier-->
         <!--Start 3rd Tier, Health Slot right-->
-        <br/>
         <div class="data2">
             <p class="d2text">Health</p>
             <p class="d2btext">
-                <i class="fas fa-chart-bar" style="font-size:7vh;color:white" id="streamhealth"></i><br />
+                <i class="fas fa-chart-bar" style="font-size:5vh;color:white" id="streamhealth"></i><br />
             </p>
         </div>
         <!-- End 3rd Tier right side-->
 
-        <br style="clear:right" />
         <div class="destination destext" style="text-transform:none" id="streamdestination">NOT&nbsp;CONNECTED</div>
         <!--5th Tier, destination streamed-->
     </div>
 
 <div>
 	<br/>
-	<br/>
-	<br/>
-	<br/>
 		<br/>
+			<br/>
 			<br/>
 </div>
 
@@ -555,17 +629,29 @@
         <div class="record stext" style="color:#ffffff" id="recordingstatus">stop</div><!--1st Tier-->
         <div class="timecode ttext" id="recordingtimecode">00:00:00</div><!--2nd Tier-->
         <!--Start 3rd Tier, Data Rec Slots-->
+
+
+
+        <div class="data">
+            <p class="d1text"><i class="fa fa-hdd-o" style="font-size:5vh;"></i>Disk Space&nbsp;<label style="text-transform:none">Gbs</label>&nbsp;</p>
+            <p class="d2textbigger" id="diskspacegb">--</p>
+        </div>
+        
+        
+<!--
         <div class="data">
             <p class="d1text"><i class="fa fa-hdd-o" style="font-size:5vh;"></i>&nbsp;Disk Status</p>
             <p class="d1btext styled" style="line-height:2vh">
              <meter min="0" max="100" low="25" high="75" value="90" id="diskmeter"></meter>
             </p>
         </div>
+-->
+
         <!--End 3rd Tier-->
         <!--Start 3rd Tier, FPS Slot right-->
         <div class="data2">
             <p class="d2text" >FPS</p>
-            <p class="d2textbigger" id="currentfps">00</p>
+            <p class="d2textbigger" id="currentfps">--</p>
         </div>
         <!-- End 3rd Tier right side-->
 
