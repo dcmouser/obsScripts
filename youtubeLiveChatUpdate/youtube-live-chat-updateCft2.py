@@ -34,6 +34,7 @@ IN THE SOFTWARE.
 # ATTN: MODIFIED 12/9/2 by jesse reichler to better get stream
 # my first try required the scene with browser source have "chat" or "youtube" in the name
 # now instead we use settings
+# see https://gist.github.com/foosel/1e39096ab679e14c36727cd6f72d5aeb
 
 # NOTE: This cannot work for UNLISTED videos
 
