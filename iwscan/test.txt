@@ -1,0 +1,514 @@
+#to manually insert a start time of stream, just add a HOTKEY:Hotkey item with the starting stream time marker
+EVENT:GOLIVE
+5:00:16 Stream Time Marker--disabled
+
+
+
+EVENT:START RECORDING @ 2022-02-01 23:00:33
+0:00:00 Record Time Marker
+0:00:00 Stream Time Marker (not streaming)
+
+EVENT:START STREAM @ 2022-02-01 23:00:33
+0:00:00 Record Time Marker
+0:00:00 Stream Time Marker
+
+HOTKEY:Hotkey pressed
+0:00:16 Record Time Marker
+0:00:16 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:03:52
+0:03:19 Record Time Marker
+0:03:19 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Starting Soon @ 2022-02-01 23:03:52
+0:03:19 Record Time Marker
+0:03:19 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Starting Webcam @ 2022-02-01 23:04:28
+0:03:55 Record Time Marker
+0:03:55 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:04:40
+0:04:07 Record Time Marker
+0:04:07 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Video 4 @ 2022-02-01 23:05:53
+0:05:20 Record Time Marker
+0:05:20 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-01 23:06:41
+0:06:08 Record Time Marker
+0:06:08 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:06:59
+0:06:26 Record Time Marker
+0:06:26 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-01 23:08:12
+0:07:39 Record Time Marker
+0:07:39 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:19:09
+0:18:36 Record Time Marker
+0:18:36 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Video 4 @ 2022-02-01 23:21:40
+0:21:07 Record Time Marker
+0:21:07 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:22:36
+0:22:03 Record Time Marker
+0:22:03 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Video 4 @ 2022-02-01 23:24:51
+0:24:18 Record Time Marker
+0:24:18 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:25:02
+0:24:29 Record Time Marker
+0:24:29 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-01 23:28:36
+0:28:03 Record Time Marker
+0:28:03 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-01 23:28:37
+0:28:04 Record Time Marker
+0:28:04 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:33:51
+0:33:18 Record Time Marker
+0:33:18 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Break (10 min) @ 2022-02-01 23:35:43
+0:35:10 Record Time Marker
+0:35:10 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Starting Webcam @ 2022-02-01 23:45:39
+0:45:06 Record Time Marker
+0:45:06 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:45:49
+0:45:16 Record Time Marker
+0:45:16 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-01 23:46:21
+0:45:48 Record Time Marker
+0:45:48 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-01 23:48:30
+0:47:57 Record Time Marker
+0:47:57 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-01 23:48:36
+0:48:03 Record Time Marker
+0:48:03 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-01 23:48:38
+0:48:05 Record Time Marker
+0:48:05 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-01 23:53:26
+0:52:53 Record Time Marker
+0:52:53 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-01 23:54:39
+0:54:06 Record Time Marker
+0:54:06 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 00:02:41
+1:02:08 Record Time Marker
+1:02:08 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 00:02:51
+1:02:18 Record Time Marker
+1:02:18 Stream Time Marker
+
+EVENT:SCENE CHANGED TO SuperCloseTop @ 2022-02-02 00:04:32
+1:03:59 Record Time Marker
+1:03:59 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 00:04:38
+1:04:05 Record Time Marker
+1:04:05 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 00:14:20
+1:13:48 Record Time Marker
+1:13:48 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 00:16:29
+1:15:56 Record Time Marker
+1:15:56 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 00:16:32
+1:15:59 Record Time Marker
+1:15:59 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 00:20:45
+1:20:12 Record Time Marker
+1:20:12 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 00:22:12
+1:21:39 Record Time Marker
+1:21:39 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 00:22:38
+1:22:05 Record Time Marker
+1:22:05 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 00:38:54
+1:38:21 Record Time Marker
+1:38:21 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 00:39:22
+1:38:49 Record Time Marker
+1:38:49 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 00:40:32
+1:40:00 Record Time Marker
+1:40:00 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 00:47:06
+1:46:33 Record Time Marker
+1:46:33 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 00:47:41
+1:47:08 Record Time Marker
+1:47:08 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Break (10 min) @ 2022-02-02 00:48:11
+1:47:38 Record Time Marker
+1:47:38 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Starting Webcam @ 2022-02-02 00:58:03
+1:57:30 Record Time Marker
+1:57:30 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 00:58:13
+1:57:40 Record Time Marker
+1:57:40 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 00:58:47
+1:58:14 Record Time Marker
+1:58:14 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 00:59:19
+1:58:46 Record Time Marker
+1:58:46 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 01:56:14
+2:55:41 Record Time Marker
+2:55:41 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 02:01:27
+3:00:54 Record Time Marker
+3:00:54 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 02:01:28
+3:00:55 Record Time Marker
+3:00:55 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 02:08:08
+3:07:35 Record Time Marker
+3:07:35 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 02:09:08
+3:08:35 Record Time Marker
+3:08:35 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 02:13:44
+3:13:11 Record Time Marker
+3:13:11 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 02:15:26
+3:14:53 Record Time Marker
+3:14:53 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 02:19:51
+3:19:18 Record Time Marker
+3:19:18 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 02:20:47
+3:20:14 Record Time Marker
+3:20:14 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 02:43:23
+3:42:50 Record Time Marker
+3:42:50 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Break (10 min) @ 2022-02-02 02:44:28
+3:43:55 Record Time Marker
+3:43:55 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Starting Webcam @ 2022-02-02 02:54:09
+3:53:36 Record Time Marker
+3:53:36 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 02:54:24
+3:53:51 Record Time Marker
+3:53:51 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 02:55:04
+3:54:31 Record Time Marker
+3:54:31 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 03:05:15
+4:04:42 Record Time Marker
+4:04:42 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 03:42:46
+4:42:13 Record Time Marker
+4:42:13 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Break (5 min) @ 2022-02-02 03:46:29
+4:45:56 Record Time Marker
+4:45:56 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Starting Webcam @ 2022-02-02 03:50:47
+4:50:14 Record Time Marker
+4:50:14 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 03:51:22
+4:50:49 Record Time Marker
+4:50:49 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 03:52:36
+4:52:03 Record Time Marker
+4:52:03 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 03:53:09
+4:52:36 Record Time Marker
+4:52:36 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 03:56:05
+4:55:32 Record Time Marker
+4:55:32 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 04:07:42
+5:07:09 Record Time Marker
+5:07:09 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 04:08:15
+5:07:42 Record Time Marker
+5:07:42 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 04:11:46
+5:11:13 Record Time Marker
+5:11:13 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 04:11:52
+5:11:19 Record Time Marker
+5:11:19 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 04:35:21
+5:34:48 Record Time Marker
+5:34:48 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 04:38:36
+5:38:03 Record Time Marker
+5:38:03 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 04:45:00
+5:44:27 Record Time Marker
+5:44:27 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 04:45:55
+5:45:22 Record Time Marker
+5:45:22 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 05:04:07
+6:03:34 Record Time Marker
+6:03:34 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Break (10 min) @ 2022-02-02 05:04:21
+6:03:48 Record Time Marker
+6:03:48 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 05:14:07
+6:13:34 Record Time Marker
+6:13:34 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 05:15:32
+6:14:59 Record Time Marker
+6:14:59 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 05:15:35
+6:15:02 Record Time Marker
+6:15:02 Stream Time Marker
+
+EVENT:SCENE CHANGED TO SuperCloseTop @ 2022-02-02 05:23:18
+6:22:46 Record Time Marker
+6:22:46 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 05:25:16
+6:24:43 Record Time Marker
+6:24:43 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 05:38:01
+6:37:28 Record Time Marker
+6:37:28 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 05:38:38
+6:38:05 Record Time Marker
+6:38:05 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 05:46:55
+6:46:22 Record Time Marker
+6:46:22 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 05:47:10
+6:46:37 Record Time Marker
+6:46:37 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 05:50:17
+6:49:44 Record Time Marker
+6:49:44 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 05:55:36
+6:55:03 Record Time Marker
+6:55:03 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:07:12
+7:06:39 Record Time Marker
+7:06:39 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 06:08:34
+7:08:01 Record Time Marker
+7:08:01 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 06:10:23
+7:09:50 Record Time Marker
+7:09:50 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:11:16
+7:10:43 Record Time Marker
+7:10:43 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 06:14:54
+7:14:21 Record Time Marker
+7:14:21 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 06:21:48
+7:21:15 Record Time Marker
+7:21:15 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 06:22:55
+7:22:23 Record Time Marker
+7:22:23 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 06:22:58
+7:22:25 Record Time Marker
+7:22:25 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:23:23
+7:22:50 Record Time Marker
+7:22:50 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 06:24:04
+7:23:31 Record Time Marker
+7:23:31 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:24:22
+7:23:49 Record Time Marker
+7:23:49 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 06:24:38
+7:24:05 Record Time Marker
+7:24:05 Stream Time Marker
+
+EVENT:SCENE CHANGED TO SuperCloseTop @ 2022-02-02 06:28:07
+7:27:34 Record Time Marker
+7:27:34 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:29:05
+7:28:32 Record Time Marker
+7:28:32 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 06:29:11
+7:28:38 Record Time Marker
+7:28:38 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:37:32
+7:36:59 Record Time Marker
+7:36:59 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Break (5 min) @ 2022-02-02 06:38:35
+7:38:02 Record Time Marker
+7:38:02 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:43:33
+7:43:00 Record Time Marker
+7:43:00 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 06:43:46
+7:43:13 Record Time Marker
+7:43:13 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 06:43:56
+7:43:23 Record Time Marker
+7:43:23 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 06:44:18
+7:43:45 Record Time Marker
+7:43:45 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 07:11:52
+8:11:19 Record Time Marker
+8:11:19 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 07:13:44
+8:13:11 Record Time Marker
+8:13:11 Stream Time Marker
+
+HOTKEY:Hotkey pressed
+8:13:13 Record Time Marker
+8:13:13 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 07:26:08
+8:25:35 Record Time Marker
+8:25:35 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 07:26:21
+8:25:48 Record Time Marker
+8:25:48 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 07:26:23
+8:25:50 Record Time Marker
+8:25:50 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 07:27:18
+8:26:45 Record Time Marker
+8:26:45 Stream Time Marker
+
+EVENT:SCENE CHANGED TO SuperCloseTop @ 2022-02-02 07:28:48
+8:28:15 Record Time Marker
+8:28:15 Stream Time Marker
+
+EVENT:SCENE CHANGED TO CloseUp Cam @ 2022-02-02 07:29:15
+8:28:42 Record Time Marker
+8:28:42 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Top Cam @ 2022-02-02 07:29:17
+8:28:44 Record Time Marker
+8:28:44 Stream Time Marker
+
+EVENT:SCENE CHANGED TO ChatFront @ 2022-02-02 07:29:26
+8:28:53 Record Time Marker
+8:28:53 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Front Cam @ 2022-02-02 07:41:42
+8:41:09 Record Time Marker
+8:41:09 Stream Time Marker
+
+EVENT:SCENE CHANGED TO Title - Ended @ 2022-02-02 07:42:20
+8:41:47 Record Time Marker
+8:41:47 Stream Time Marker
+
+EVENT:STOP STREAM @ 2022-02-02 07:44:22 Stream Time Marker Reset to 0
+8:43:49 Record Time Marker
+0:00:00 Stream Time Marker (not streaming)
+
+EVENT:STOP RECORDING @ 2022-02-02 07:44:22 Record Time Marker Reset to 0
+0:00:00 Record Time Marker (not recording)
+0:00:00 Stream Time Marker (not streaming)
+
