@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 """
-file_copy: Copy file line-by-line from source to destination
+this tool scans infoWriter text output and writes all events that happen after a break or on a hotkey press
+it uses the FIRST hotkey it finds before a break to set the starting offset of the stream
+OR you can manually set the starting stream offset time by simply adding a HOTKEY:HOTKEY GOLIVE entry with the real Stream Time Marker time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Usage: iwscan <src>
 """
@@ -22,6 +24,15 @@ def main():
     if not os.path.isfile(fileIn):
         print("error: {} does not exist".format(fileIn))
         sys.exit(1)
+        
+    linesWritten = doProcessFile(fileIn, fileOut, "Stream", True)
+    if (linesWritten == 0):
+        linesWritten = doProcessFile(fileIn, fileOut, "Record", False)
+
+    print("Output timestamps:{}\n".format(linesWritten))
+
+
+def doProcessFile(fileIn, fileOut, timeStampKeyword, heuristicResetAtFirstHotkey):
 
     # Verify destination file
     if False and os.path.isfile(fileOut):
@@ -42,11 +53,10 @@ def main():
     regexEventNonBreak = re.compile("^EVENT\:(.*)")
     regexGoLive = re.compile("(.*GOLIVE.*)")
     regexHotkey = re.compile("^HOTKEY\:(.*)")
-    regexStreamTime = re.compile("^(.*) Stream Time Marker$")
+    regexStreamTime = re.compile("^(.*) " + timeStampKeyword + " Time Marker$")
 
     # Process the file line-by-line
     with open(fileIn, 'r') as fpIn, open(fileOut, 'w') as fpOut:
-        writeTimestampLineToFile(fpOut, "0:00", "Start of stream")
         lineNumber = 0
         for line in fpIn:
             lineNumber += 1
@@ -65,7 +75,7 @@ def main():
                 # go hotkey
                 currentEventLine = line
                 withNextTimestamp = "write"
-                if (writeLines == 0) and (timeOffsetSeconds == 0):
+                if (writeLines == 0) and (timeOffsetSeconds == 0) and (heuristicResetAtFirstHotkey):
                     # kludge, if first hotkey comes before first break, we use it to reset stream time
                     withNextTimestamp = "writeAndStreamStartTimeReset"
             elif (regexStreamTime.match(line)):
@@ -77,6 +87,10 @@ def main():
                     timeOffsetSeconds = convertTimeStampToSeconds(timeStampText)
                 elif (withNextTimestamp=="write") or (withNextTimestamp=="writeAndStreamStartTimeReset"):
                     # write it out
+                    if (writeLines == 0):
+                        # initial start time
+                        writeTimestampLineToFile(fpOut, "0:00:00", "Start of stream")
+                    # write it
                     timeStampTextAdjusted = adjustTimeStamp(timeStampText,timeOffsetSeconds)
                     writeTimestampLineToFile(fpOut, timeStampTextAdjusted, currentEventLine)
                     writeLines = writeLines + 1                
@@ -89,7 +103,8 @@ def main():
                     inBreakFlag = False
                     currentEventLine = line
                     withNextTimestamp = "write"
-        print("Processed lines: {}\n".format(lineNumber))
+    # return # of lines written
+    return writeLines
 
 
 
@@ -119,7 +134,7 @@ def writeTimestampLineToFile(fpOut, timeStampText, lineLabel):
 
 def cleanTimeStampForOutput(timeStampText):
     # remove leading 0s and :
-    timeStampTextClean = re.sub("^[0\:]+" , "", timeStampText)
+    timeStampTextClean = re.sub("^[0\:]{1,3}" , "", timeStampText)
     if (timeStampTextClean==""):
         return timeStampText
     return timeStampTextClean
