@@ -30,7 +30,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
 
-
+# ATTN: modified 2/10/22
 # ATTN: MODIFIED 12/9/2 by jesse reichler to better get stream
 # my first try required the scene with browser source have "chat" or "youtube" in the name
 # now instead we use settings
@@ -43,11 +43,11 @@ import urllib.request
 import urllib.error
 import json
 
-__author__ = "Gina Häußge"
+__author__ = "Gina Häußge/mouser"
 __license__ = "MIT"
 
 channelid   = "UCVhDxIFwwaaeb7nZ4cWA3tw"
-apikey      = "YOUR_YOUTUBE_APIKEY"
+apikey      = "AIzaSyA9IHc-dyJqJ9O2y14MmHIPyd1ZjplZj4o"
 source_name = "BrowserTest"
 delay       = 5
 
@@ -61,15 +61,29 @@ YOUTUBE_CHAT_URL = "https://gaming.youtube.com/live_chat?v={vid}"
 NO_STREAM = "https://gaming.youtube.com/live_chat?v=VIDEOIDHERE"
 # ------------------------------------------------------------
 
-def update_url():
+def update_url_timer_silent():
+    #obs.remove_current_callback()
+    obs.timer_remove(update_url_timer_silent)
+    doUpdateUrl(False)
+
+def update_url_timer_complain():
+    #obs.remove_current_callback()
+    obs.timer_remove(update_url_timer_complain)
+    doUpdateUrl(True)
+	
+def removeUpdateUrlTimers():
+    obs.timer_remove(update_url_timer_silent)
+    obs.timer_remove(update_url_timer_complain)
+
+
+def doUpdateUrl(showError):
     global channelid
     global apikey
     global source_name
     global globalFoundGoodUrl
     global globalTrustFoundGoodUrl
     global livechat
-    
-    obs.timer_remove(update_url)
+
     
     if (globalTrustFoundGoodUrl and globalFoundGoodUrl):
         # we can try skipping refetching if we haven't reset the streaming so that switching back to scene doesnt require a refetch
@@ -92,7 +106,7 @@ def update_url():
                     print("Found live stream, vid: {}".format(vid))
 
                     livechat = YOUTUBE_CHAT_URL.format(vid=vid)
-                    print("Setting livechat URL to {}".format(livechat))
+                    print("Got livechat URL as: {}".format(livechat))
                 else:
                     livechat = NO_STREAM
                     # obs.script_log(obs.LOG_DEBUG, "No active stream, skipping update.")
@@ -111,20 +125,25 @@ def update_url():
                 		obs.obs_data_set_string(settings, "url", livechat)
                 		obs.obs_source_update(source, settings)
                 		print("ATTN: " + "Set livechat url to " + livechat)
-                		globalFoundGoodUrl = True
                 	else:
-                		print("ATTN:Livechat url remains unchanged, doing noting: " + livechat + " vs " + livechatOld)
+                		#print("ATTN:Livechat url remains unchanged, doing noting: " + livechat + " vs " + livechatOld)
+                		print("ATTN:Livechat url remains unchanged, nothing to do.")
+                	globalFoundGoodUrl = True
                 	obs.obs_data_release(settings)
 
         except urllib.error.URLError as err:
-            obs.script_log(obs.LOG_WARNING, "Error retrieving livechat URL for channel '" + channelid + "': " + err.reason)
-            obs.remove_current_callback()
+            msg = "ATTN: Error retrieving livechat URL for channel '" + channelid + "': " + err.reason
+            if (showError):
+                obs.script_log(obs.LOG_WARNING, msg)
+            else:
+                print("ATTN: error getting chat url: " + msg)
+            #obs.remove_current_callback()
 
         obs.obs_source_release(source)
 
 def refresh_pressed(props, prop):
     print("Refresh pressed")
-    update_url()
+    doUpdateUrl(True)
 
 def on_frontend_event(event):
     #print ("ATTN: on_frontend_event 1")
@@ -135,21 +154,21 @@ def on_frontend_event(event):
         #print("ATTN: Streaming started")
         global globalFoundGoodUrl
         globalFoundGoodUrl = False
-        obs.timer_remove(update_url)
-        obs.timer_add(update_url, delay * 1000)
+        removeUpdateUrlTimers()
+        obs.timer_add(update_url_timer_silent, delay * 1000)
     elif event == obs.OBS_FRONTEND_EVENT_STREAMING_STOPPED:
         #print("ATTN: Streaming stopped")
-        obs.timer_remove(update_url)
+        removeUpdateUrlTimers()
     elif event == obs.OBS_FRONTEND_EVENT_EXIT:
         #print ("ATTN: on_frontend_event exit")
         globalAppIsExiting = True
         # TEST
-        # obs.timer_remove(update_url)
+        # removeUpdateUrlTimers()
     #elif event == obs.OBS_FRONTEND_EVENT_SCENE_COLLECTION_CLEANUP:
     #    #print ("ATTN: on_frontend_event cleanup")
     #    globalAppIsExiting = True
     #    # TEST
-    #    # obs.timer_remove(update_url)
+    #    # removeUpdateUrlTimers()
     elif (not globalAppIsExiting) and (event == obs.OBS_FRONTEND_EVENT_SCENE_CHANGED):
         #print ("ATTN: on_frontend_event OBS_FRONTEND_EVENT_SCENE_CHANGED")
         #obs.script_log(obs.LOG_DEBUG, "ATTN:In on_frontend_event scene changed.")
@@ -187,8 +206,8 @@ def checkCurrentSceneOnChange():
             if (scene_item != None):
                 obs.script_log(obs.LOG_DEBUG, "ATTN: Changed to script designated chat scene, trigerring update..")
                 # ask to reload url
-                obs.timer_remove(update_url)
-                obs.timer_add(update_url, 200)
+                removeUpdateUrlTimers()
+                obs.timer_add(update_url_timer_complain, 200)
             else:
             	  #obs.script_log(obs.LOG_DEBUG, "Changed to NON-browser chat scene.")
     	          pass
@@ -250,5 +269,5 @@ def script_unload():
     global globalAppIsExiting
     globalAppIsExiting = True
     obs.obs_frontend_remove_event_callback(on_frontend_event)
-    # obs.timer_remove(update_url)
+    # removeUpdateUrlTimers()
 
