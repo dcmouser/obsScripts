@@ -4,10 +4,9 @@ html { visibility:hidden;
 .parentbox {
   transform: scale(2);
   transform-origin: top;
-  padding-left: 340px;
-  padding-left: 250px;
-  padding-left: 265px;
-  width: 740px;
+  /* fix for scale(2) messing up margins */
+	margin-left: 25%;
+	margin-right: 25%;
 }
 
 
@@ -187,7 +186,7 @@ body.light-theme .buttons .button:hover {
   box-sizing: border-box;
   padding-left: 20px;
   padding-right: 20px;
-  width: 100%;
+  /*width: 100%;*/
 }
 
 
@@ -282,5 +281,12 @@ body.light-theme .buttons .button:hover {
 
 #flipdown_done {
 	 text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
-	 font-size: 4rem;
+	 font-size: 3rem;
+	 padding-top: 0.5em;
+}
+
+
+
+
+#flipdown {
 }

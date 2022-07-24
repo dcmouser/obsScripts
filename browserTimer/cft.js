@@ -16,9 +16,9 @@
 				}
   			
   			if (name=="countdown") {
-  				var mins = parseInt(value);
+  				var mins = parseFloat(value);
 					if (isNaN(mins)) {
-						doShowError("ERROR: countdown value should be specified as an integer (found: '" + value+"').");
+						doShowError("ERROR: countdown value should be specified as an floating point # (found: '" + value+"').");
 						return;
 					}
   				setupTimedBreak(mins);
@@ -27,9 +27,9 @@
   			}
   			
   			else if (name=="countup") {
-  				var mins = parseInt(value);
+  				var mins = parseFloat(value);
 					if (isNaN(mins)) {
-						doShowError("ERROR: countdown value should be specified as an integer (found: '" + value+"').");
+						doShowError("ERROR: countdown value should be specified as a floating point # (found: '" + value+"').");
 						return;
 					}
 					modeCountUp = true;
@@ -56,6 +56,26 @@
 						++goodArgCount;
 					}
 				}
+
+  			else if (name=="finish") {
+  				value = value.replace(/\%20/gi," ");
+					finishMessage = value;
+  				++goodArgCount;
+  			}
+  			
+  			else if (name=="center") {
+					centerLayout = true;
+  				++goodArgCount;
+					document.getElementById("flipdown").style.margin = "auto";
+					document.getElementById("flipdown_done").style.margin = "auto";
+  			}
+   			else if (name=="left") {
+					centerLayout = false;
+  				++goodArgCount;
+					//document.getElementById("flipdown").style.margin = "auto";
+					//document.getElementById("flipdown_done").style.margin = "auto";
+  			}
+
 
 				else {
 					doShowError("unknown commandline parameter passed: " + name)
@@ -173,7 +193,7 @@
 			var goodArgCount = processArgs();
 			if (goodArgCount == 0) {
 				// error
-				doShowError("No valid commandline arguement passed. Should be one of:\nindex.html?countdown=# (e.g. index.html?countdown=5)\nindex.html?starts=date at time (e.g.: 'index.html?starts=DEC 19, 2021 at 11:00 pm')");
+				doShowError("No valid commandline arguement passed. Should be one of:\nindex.html?countdown=# (e.g. index.html?countdown=5)\nindex.html?starts=date at time (e.g.: 'index.html?starts=DEC 19, 2021 at 11:00 pm\nyou can also pass finish=end message.'); you can also add commandline option 'center' to horizontally center the text.");
 			}
 		}
 		
@@ -233,6 +253,9 @@
 	  
 	  
 	  function globalCallbackTimerEnds() {
+			var doneEl = document.getElementById("flipdown_done");
+			doneEl.innerHTML = finishMessage;
+
 	  }
 
 
@@ -344,6 +367,8 @@
 		var backgroundColorBlack;
 		var backgroundColor = undefined;
 		var globalError = "";
+		var finishMessage = "STAND BY..";
+		var centerLayout = false;
 		
 		// set default var values
 		setDefaultVarValues();
