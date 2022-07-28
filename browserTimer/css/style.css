@@ -111,7 +111,11 @@ body {
   margin: 0px;
   margin-top: 0px;
   overflow: hidden;
+	/*
+	ATTN: now we start with transparent background color by default so obs doesnt flash
 	background-color: #ffedb4;
+	*/
+	background-color: #b4f268;
 }
 
 body,
