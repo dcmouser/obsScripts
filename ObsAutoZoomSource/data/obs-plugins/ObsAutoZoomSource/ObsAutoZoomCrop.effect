@@ -1,0 +1,50 @@
+uniform float4x4 ViewProj;
+uniform texture2d image;
+
+uniform float2 mul_val;
+uniform float2 add_val;
+uniform float2 clip_ul;
+uniform float2 clip_lr;
+
+
+sampler_state textureSampler {
+	//Filter    = Linear;
+	Filter    = Bicubic;
+	AddressU  = Border;
+	AddressV  = Border;
+	BorderColor = 00000000;
+};
+
+struct VertData {
+	float4 pos : POSITION;
+	float2 uv  : TEXCOORD0;
+};
+
+
+VertData VSCrop(VertData v_in)
+{
+	VertData vert_out;
+
+	vert_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);
+	vert_out.uv  = v_in.uv * mul_val + add_val;
+	//vert_out.uv  = v_in.uv * mul_val;
+
+	return vert_out;
+}
+
+float4 PSCrop(VertData v_in) : TARGET
+{
+  // clip to crop area
+	if (v_in.uv.x < clip_ul.x || v_in.uv.x > clip_lr.x || v_in.uv.y < clip_ul.y || v_in.uv.y > clip_lr.y) clip(-1);
+
+	return image.Sample(textureSampler, v_in.uv);
+}
+
+technique Draw
+{
+	pass
+	{
+		vertex_shader = VSCrop(v_in);
+		pixel_shader  = PSCrop(v_in);
+	}
+}
