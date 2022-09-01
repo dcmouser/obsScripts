@@ -1,3 +1,0 @@
-cls
-copy x64\Release\ObsAutoZoomFilter.dll C:\ProgramFiles\MyObsStudio\obs-plugins\64bit
-copy data\obs-plugins\ObsAutoZoomFilter\*.effect C:\ProgramFiles\MyObsStudio\data\obs-plugins\ObsAutoZoomFilter\
