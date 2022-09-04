@@ -9,9 +9,7 @@
 // obs helper
 #include <util/dstr.h>
 //
-#include "ObsAutoZoomSource.h"
-#include "ObsAutoZoomSourceDefs.h"
-#include "obsHelpers.h"
+#include "myPlugin.h"
 //---------------------------------------------------------------------------
 
 
@@ -66,6 +64,7 @@ bool OnPropertyKeyTypeChangeCallback(obs_properties_t *props, obs_property_t *p,
 
 
 bool OnPropertyNSrcModifiedCallback(obs_properties_t *props, obs_property_t *property, obs_data_t *settings) {
+	// sets the desired number of sources enabled in the options for user to choose
 	int n_src = obs_data_get_int(settings, SETTING_srcN);
 	for (int i = 0; i < DefMaxSources; i++) {
 		char name[16];
@@ -101,7 +100,10 @@ void onHotkeyCallback(void *data, obs_hotkey_id id, obs_hotkey_t *key, bool pres
 		plugin->opt_debugDisplay = !plugin->opt_debugDisplay;
 	} else if (id == plugin->hotkeyId_ToggleBypass) {
 		plugin->opt_filterBypass = !plugin->opt_filterBypass;
-	} else {
+	} else if (id == plugin->hotkeyId_CycleSource) {
+		plugin->stracker.cycleWorkingSource();
+	}
+	else {
 		// unknown hotkey
 	}
 	//
@@ -164,12 +166,18 @@ obs_properties_t *plugin_properties(void* data)
 	//
 	obs_properties_add_text(props, SETTING_zcForcedOutputRes, TEXT_zcForcedOutputRes, OBS_TEXT_DEFAULT);
 
+/*
 	obs_properties_add_int(props, SETTING_zcMarkerlessSourceIndex, TEXT_zcMarkerlessSourceIndex, 0, DefMaxSources-1,1);
-	//
 	char labelWithInfo[80];
-	sprintf(labelWithInfo, "%s (%d,%d,%d,%d)", TEXT_zcMarkerlessCoords, plugin->dbx1, plugin->dby1, plugin->dbx2 == plugin->workingWidth-1 ? -1 : plugin->dbx2, plugin->dby2 == plugin->workingHeight-1 ? -1 : plugin->dby2);	
+//	sprintf(labelWithInfo, "%s (%d,%d,%d,%d)", TEXT_zcMarkerlessCoords, plugin->lookingx1, plugin->lookingy1, plugin->lookingx2 == plugin->workingWidth-1 ? -1 : plugin->lookingx2, plugin->lookingy2 == plugin->workingHeight-1 ? -1 : plugin->lookingy2);	
+	sprintf(labelWithInfo, "%s (x1,y1,x2,y2)", TEXT_zcMarkerlessCoords);
 	obs_properties_add_text(props, SETTING_zcMarkerlessCoords, labelWithInfo, OBS_TEXT_DEFAULT);
 	//	obs_properties_add_button(props, SETTING_zcMarkerlessCoordsButton, TEXT_zcMarkerlessCoordsButton, onMarkerlessCoordsButtonPress);
+*/
+ 	char labelWithInfo[80];
+	sprintf(labelWithInfo, "%s (source#,zoom) | ...", TEXT_zcMarkerlessCycleList);
+	obs_properties_add_text(props, SETTING_zcMarkerlessCycleList, labelWithInfo, OBS_TEXT_DEFAULT);
+
 	//
 	p = obs_properties_add_list(props, SETTING_COLOR_TYPE, TEXT_COLOR_TYPE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_STRING);
 	obs_property_list_add_string(p, obs_module_text("Green"), "green");
@@ -188,7 +196,7 @@ obs_properties_t *plugin_properties(void* data)
 	obs_properties_add_int_slider(props, SETTING_rmSizetMax, TEXT_rmSizetMax, 0, 400, 1);
 	obs_properties_add_int_slider(props, SETTING_rmStageShrink, TEXT_rmStageShrink,1,16,1);
 
-	// multi sources
+	// add properites for sources and callbacks when they are modified
 	p = obs_properties_add_int(props, SETTING_srcN, TEXT_srcN, 1, DefMaxSources, 1);
 	obs_property_set_modified_callback(p, OnPropertyNSrcModifiedCallback);
 	for (int i = 0; i < DefMaxSources; i++) {
@@ -196,7 +204,7 @@ obs_properties_t *plugin_properties(void* data)
 		snprintf(name, sizeof(name), "src%d", i);
 		struct dstr desc = { 0 };
 		dstr_printf(&desc, obs_module_text("Source %d"), i);
-		plugin->properties_add_source(props, name, desc.array);
+		plugin->addPropertyForASourceOption(props, name, desc.array);
 		dstr_free(&desc);
 	}
 
@@ -237,8 +245,12 @@ void plugin_defaults(obs_data_t *settings)
 	obs_data_set_default_int(settings, SETTING_zcMaxZoom, 0);
 	//
 	obs_data_set_default_string(settings, SETTING_zcForcedOutputRes, SETTING_Def_zcForcedOutputRes);
+	//
+	/*
 	obs_data_set_default_int(settings, SETTING_zcMarkerlessSourceIndex, 0);
 	obs_data_set_default_string(settings, SETTING_zcMarkerlessCoords, SETTING_Def_zcMarkerlessCoords);
+	*/
+	obs_data_set_default_string(settings, SETTING_zcMarkerlessCycleList, SETTING_Def_zcMarkerlessCycleList);
 	//
 	obs_data_set_default_int(settings, SETTING_srcN, SETTING_Def_srcN);
 }
@@ -279,18 +291,20 @@ void plugin_destroy(void *data)
 	JrPlugin *plugin = (JrPlugin*) data;
 
 	WaitForSingleObject(plugin->mutex, INFINITE);
-	//
+
 	obs_enter_graphics();
-	plugin->freeDestroyEffectsAndTexRender();
-	plugin->freeDestroyFilterTextures();
+		plugin->freeBeforeReallocateEffectsAndTexRender();
+		plugin->freeBeforeReallocateFilterTextures();
 	obs_leave_graphics();
 
-	plugin->freeDestroyNonGraphicData();
+	plugin->freeBeforeReallocateNonGraphicData();
 
 	ReleaseMutex(plugin->mutex);
 	CloseHandle(plugin->mutex);
 
-	// let go of ourselves
+	plugin->stracker.freeForExit();
+
+	// let go of ourselves? this is weird but i guess this is how we allocate construct ourselves
 	bfree(data);
 }
 
@@ -306,11 +320,11 @@ void *plugin_create(obs_data_t *settings, obs_source_t *context)
 
 	// init stuff inside graphics
 	obs_enter_graphics();
-	plugin->initFilterInGraphicsContext();
+	bool success = plugin->initFilterInGraphicsContext();
 	obs_leave_graphics();
 
-	if (!plugin->effectChroma || !plugin->effectZoomCrop) {
-		obserror("Aborting load due to failure to load effect files.");
+	if (!success) {
+		obserror("Aborting load of plugin due to failure to initialize (find effeects, etc.).");
 		plugin_destroy(plugin);
 		return NULL;
 	}
@@ -351,107 +365,17 @@ void *plugin_create(obs_data_t *settings, obs_source_t *context)
 //---------------------------------------------------------------------------
 void plugin_tick(void *data, float t) {
 	JrPlugin *plugin = (JrPlugin*) data;
-
-	// ATTN: there is code in render() that could be placed here..
-
-	// ATTN: rebuild sources from multisource effect plugin code -- needed every tick?
-	plugin->checkAndUpdateAllSources();
+	plugin->doTick();
 }
-//---------------------------------------------------------------------------
 
 
 
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
 void plugin_render(void* data, gs_effect_t* obsoleteFilterEffect) {
 	UNUSED_PARAMETER(obsoleteFilterEffect);
 	JrPlugin* plugin = (JrPlugin*) data;
-
-	// get current source -- note this must be released when done
-	obs_source_t* source = plugin->getCurrentSource();
-	if (!source) {
-		//mydebug("ERROR: NULL autoZoom source.");
-		return;
-	}
-
-	//basic info about source
-	uint32_t width = plugin->jrSourceGetWidth(source);
-	uint32_t height = plugin->jrSourceGetHeight(source);
-	mydebug("in plugin_render 2b with source size: %dx%d.", width, height);
-	if (!width || !height) {
-		// release source
-		plugin->freeSource(source);
-		//mydebug("ERROR: autoZoom source is non-NULL but 0 width or height.");
-		return;
-	}
-
-	// resize to height if it's changed
-	plugin->recreateStagingMemoryIfNeeded(source);
-
-	// bypass mode says do NOTHING just render source to output (note this may resize it)
-	// you can force this to always be true to bypass most processing for debug testing
-	if (false || plugin->opt_filterBypass) {
-		// just render out the source untouched
-		plugin->doRenderSourceOut(source);
-		// release source, all done
-		plugin->freeSource(source);
-		return;
-	}
-
-	// are we doing tracking? and should we update our box location based on some machine vision?
-	bool shouldUpdateTrackingBox = false;
-	//
-	if (plugin->opt_enableAutoUpdate || plugin->trackingOneShot) {
-		if (++plugin->trackingUpdateCounter >= plugin->opt_updateRate || plugin->trackingOneShot) {
-			// frequence to update tracking box
-			plugin->trackingUpdateCounter = 0;
-			//
-			shouldUpdateTrackingBox = true;
-		}
-	}
-
-	// ok so there are two cases where we need to call doRenderWorkUpdateTracking
-	//  one is when we are updating the machine vision detection of the tracking box; another is when we want to SHOW the current tracking box even if its not being update
-	if (shouldUpdateTrackingBox || plugin->opt_debugDisplay) {
-		plugin->doRenderWorkUpdateTracking(source, width, height, shouldUpdateTrackingBox);
-	}
-
-	// update target zoom box from tracking box -- note this may happen EVEN when we are not doing a tracking box update, to provide smooth movement to target
-	plugin->updateZoomCropBoxFromCurrentCandidate();
-
-	// if we are in debugDisplayMode then we just display the debug overlay as our plugin and do not crop
-	if (plugin->opt_debugDisplay) {
-		// overlay debug info on internatl buffer
-		plugin->overlayDebugInfoOnInternalDataBuffer();
-		//  then render from internal planning data texture to display for debug purposes
-		plugin->doRenderFromInternalMemoryToFilterOutput();
-	} else if (plugin->cropBoxReady && !(plugin->dbx1 == 0 && plugin->dby1 == 0 && plugin->dbx2 == plugin->workingWidth-1 && plugin->dby2 == plugin->workingHeight-1 && plugin->outWidth == plugin->workingWidth && plugin->outHeight == plugin->workingHeight)) {
-		// we dont do a debug overlay render but instead crop in on the tracking box
-		plugin->doRenderAutocropBox(source, width, height);
-	}
-	else {
-		// nothing to do at all
-		plugin->doRenderSourceOut(source);
-	}
-
-	if (plugin->trackingOneShot) {
-		// turn off one-shot
-		plugin->trackingOneShot = false;
-	}
-
-	// release source
-	plugin->freeSource(source);
+	plugin->doRender();
 }
 //---------------------------------------------------------------------------
-
 
 
 
@@ -470,19 +394,21 @@ void plugin_render(void* data, gs_effect_t* obsoleteFilterEffect) {
 void plugin_enum_sources(void *data, obs_source_enum_proc_t enum_callback, void *param) {
 	JrPlugin* plugin = (JrPlugin*) data;
 
-	if (plugin->in_enum)
+	if (plugin->in_enumSources)
 		return;
-	plugin->in_enum = true;
+	plugin->in_enumSources = true;
+	SourceTracker* strackerp = plugin->getSourceTrackerp();
+	int numSources = strackerp->getSourceCount();
 
-	for (int i = 0; i < DefMaxSources && i < plugin->n_src; i++) {
-		obs_source_t *src =plugin-> get_source(i);
+	for (int i = 0; i < numSources; i++) {
+		obs_source_t *src = strackerp->getFullSourceFromWeakSourcepByIndex(i);
 		if (!src)
 			continue;
 		enum_callback(plugin->context, src, param);
-		plugin->freeSource(src);
+		strackerp->freeFullSource(src);	src = NULL;
 	}
 
-	plugin->in_enum = false;
+	plugin->in_enumSources = false;
 }
 //---------------------------------------------------------------------------
 
@@ -513,14 +439,20 @@ enum gs_color_space plugin_get_color_space(void *data, size_t count,  const enum
 	};
 
 	// get current source (be sure to free it before we leave)
-	obs_source_t* source = plugin->getCurrentSource();
+	TrackedSource* tsourcep = plugin->stracker.getCurrentSourceViewing();
+	if (tsourcep) {
+		//mydebug("ERROR: NULL tsourcep in plugin_get_color_space.");
+		return GS_CS_SRGB;
+	}
+	//
+	obs_source_t* source = tsourcep->getFullSourceFromWeakSource();
 	if (!source) {
 		//mydebug("ERROR: NULL source in plugin_get_color_space.");
 		return GS_CS_SRGB;
 	}
 	const enum gs_color_space source_space = obs_source_get_color_space(source,	OBS_COUNTOF(potential_spaces), potential_spaces);
 
-	plugin->freeSource(source);
+	plugin->stracker.freeFullSource(source); source = NULL;
 	return source_space;
 }
 //---------------------------------------------------------------------------

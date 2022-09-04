@@ -75,6 +75,8 @@ public:
 	void rdResize(int rwidth, int rheight);
 	int fillFromStagingMemory(uint8_t* internalObsRgbAData, uint32_t linesize);
 	//
+	JrRegionSummary* getRegionpByIndex(int i) { return &regions[i]; }
+	//
 	int doConnectedComponentLabeling();
 	//
 	void initializeRegionData(DefLabelType labelIndex);

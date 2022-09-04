@@ -2,8 +2,8 @@
 // taken from multi-effect plugin
 //---------------------------------------------------------------------------
 
-
 #pragma once
+
 
 #ifdef __cplusplus
 extern "C" {

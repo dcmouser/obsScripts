@@ -20,8 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\jrRegionDetector.cpp" />
-    <ClCompile Include="..\src\ObsAutoZoomSource.cpp" />
-    <ClCompile Include="..\src\ObsAutoZoomSourceCode.cpp" />
+    <ClCompile Include="..\src\jrSourceTracker.cpp" />
+    <ClCompile Include="..\src\pluginCodeHelper.cpp" />
+    <ClCompile Include="..\src\pluginCodeRender.cpp" />
+    <ClCompile Include="..\src\pluginCodeSetup.cpp" />
+    <ClCompile Include="..\src\myPlugin.cpp" />
+    <ClCompile Include="..\src\pluginCodeMain.cpp" />
     <ClCompile Include="..\src\source_list.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,13 +33,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\jrRegionDetector.h" />
+    <ClInclude Include="..\src\jrSourceTracker.h" />
+    <ClInclude Include="..\src\myPlugin.h" />
     <ClInclude Include="..\src\ObsAutoZoomSource.h" />
     <ClInclude Include="..\src\obsHelpers.h" />
     <ClInclude Include="..\src\pluginInfo.h" />
     <ClInclude Include="..\src\source_list.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\ObsAutoZoomSourceDefs.h" />
+    <None Include="..\src\myPluginDefs.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{e29ca99d-fead-471a-a3d0-574271d0ca53}</ProjectGuid>

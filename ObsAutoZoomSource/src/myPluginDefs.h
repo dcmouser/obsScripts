@@ -83,6 +83,12 @@
 #define SETTING_zcForcedOutputRes				"ForcedOutputRes"
 #define TEXT_zcForcedOutputRes					obs_module_text("ForcedOutputRes")
 #define SETTING_Def_zcForcedOutputRes			""
+
+#define SETTING_zcMarkerlessCycleList			"markerlessCycleList"
+#define TEXT_zcMarkerlessCycleList				obs_module_text("markerlessCycleList")
+#define SETTING_Def_zcMarkerlessCycleList		"1,0 | 2,0 | 2,1 | 2,2"
+#define DefMarkerlessCycleListBufMaxSize		255
+/*
 #define SETTING_zcMarkerlessCoords				"markerlessCoords"
 #define TEXT_zcMarkerlessCoords					obs_module_text("markerlessCoords")
 #define SETTING_Def_zcMarkerlessCoords			"0,0,-1,-1"
@@ -91,8 +97,9 @@
 #define SETTING_zcMarkerlessSourceIndex			"markerlessSourceIndex"
 #define TEXT_zcMarkerlessSourceIndex			obs_module_text("markerlessSourceIndex")
 #define SETTING_Def_zcMarkerlessSourceIndex		0
+*/
 
-//
+
 #define SETTING_zcEasing						"zcEasing"
 #define TEXT_zcEasing							obs_module_text("zcEasing")
 
@@ -148,6 +155,11 @@
 //
 #define DefMaxSources									4
 #define DefNameLenSource								16
+//
+#define DefAlwaysUpdateTrackingWhenHunting				true
+//
+#define DefPollMissingMarkersZoomOutCheckMult			10
+#define DefPollAveragingToNearTargetZoomInCheckMult		20
 //---------------------------------------------------------------------------
 
 
