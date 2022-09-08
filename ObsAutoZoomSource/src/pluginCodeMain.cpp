@@ -14,28 +14,17 @@
 void JrPlugin::doTick() {
 	// ATTN: there is code in render() that could be placed here..
 	// ATTN: rebuild sources from multisource effect plugin code -- needed every tick?
-	checkAndUpdateAllTrackingSources();
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-void JrPlugin::checkAndUpdateAllTrackingSources() {
-
-	bool sourcesDidChange = stracker.checkAndUpdateAllTrackingSources();
-	if (sourcesDidChange) {
-		needsRebuildStaging = true;
+	stracker.checkAndUpdateAllTrackingSources();
+	if (sourcesHaveChanged) {
+		onSourcesHaveChanged();
 	}
 }
 
+
+void JrPlugin::onSourcesHaveChanged() {
+	 updateOutputSize();
+	sourcesHaveChanged = false;
+}
 //---------------------------------------------------------------------------
 
 

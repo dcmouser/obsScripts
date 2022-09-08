@@ -1,122 +1,159 @@
-﻿  jrRegionDetector.cpp
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrRegionDetector.cpp(47,55): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrRegionDetector.cpp(59,34): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  ObsAutoZoomSource.cpp
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSource.cpp(69,12): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-  ObsAutoZoomSourceCode.cpp
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(158,35): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(162,35): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(163,35): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(164,38): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(169,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(170,39): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(171,42): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(172,39): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(180,46): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(184,26): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(301,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(302,29): warning C4244: '=': conversion from 'float' to 'uint32_t', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(303,31): warning C4244: '=': conversion from 'float' to 'uint32_t', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(744,11): warning C4018: '>=': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(745,11): warning C4018: '>=': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(761,127): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(761,104): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(761,81): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(761,58): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(769,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(770,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(771,10): warning C4018: '>': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(774,10): warning C4018: '>': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(777,127): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(777,104): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(777,81): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(777,58): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1072,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1073,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1076,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1077,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1080,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1081,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1084,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1085,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1094,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1095,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1098,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1099,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1102,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1103,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1106,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1107,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1118,27): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1119,27): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1120,27): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1121,27): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1142,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1143,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1148,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1155,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1160,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1172,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1173,12): warning C4018: '>': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1176,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1183,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1184,12): warning C4018: '>': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1187,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1198,11): warning C4018: '>=': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1201,11): warning C4018: '>=': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1210,11): warning C4018: '>=': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1213,11): warning C4018: '>=': signed/unsigned mismatch
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1266,10): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1267,10): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1268,10): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1269,10): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1284,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1285,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1286,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1287,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1309,29): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1312,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1323,25): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1344,29): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1345,31): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1387,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1388,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1389,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1390,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1402,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1403,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1404,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1405,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1412,7): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1413,7): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1414,7): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1415,7): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1442,16): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1443,17): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1444,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1445,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1446,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1448,23): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1453,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1463,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1464,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1465,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1466,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1317,8): warning C4101: 'thisTargetDelta': unreferenced local variable
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1519,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1569,20): warning C4244: 'initializing': conversion from 'uint32_t' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1570,21): warning C4244: 'initializing': conversion from 'uint32_t' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1572,15): warning C4244: 'initializing': conversion from 'uint32_t' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1573,16): warning C4244: 'initializing': conversion from 'uint32_t' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1638,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1639,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1645,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1686,26): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\ObsAutoZoomSourceCode.cpp(1698,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  source_list.cpp
+﻿  jrSourceTracker.cpp
+  jrTrackedSource.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(266,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(383,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(384,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(387,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(388,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(391,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(392,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(395,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(396,22): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(405,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(406,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(409,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(410,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(413,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(414,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(417,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(418,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(430,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(431,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(432,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(433,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(444,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(445,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(450,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(457,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(462,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(473,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(474,16): warning C4018: '>': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(477,24): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(484,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(485,16): warning C4018: '>': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(488,24): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(499,15): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(502,15): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(511,15): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(514,15): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(734,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(735,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(736,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSource.cpp(737,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  jrTrackedSourceMisc.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceMisc.cpp(73,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceMisc.cpp(95,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  jrTrackedSourceRender.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(124,11): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(125,11): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(142,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(143,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(144,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(145,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(148,10): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(149,10): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(150,144): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(150,121): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(150,98): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(150,75): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(158,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(179,12): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(180,12): warning C4018: '>=': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(182,149): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(182,125): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(182,101): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(182,77): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(191,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(192,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(196,10): warning C4018: '>': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(199,10): warning C4018: '>': signed/unsigned mismatch
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(202,144): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(202,121): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(202,98): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(202,75): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(248,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceRender.cpp(248,24): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  jrTrackedSourceZoomBox.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(68,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(69,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(70,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(71,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(100,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(101,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(102,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(103,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(132,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(154,30): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(156,29): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(229,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(230,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(231,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(232,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(247,24): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(248,24): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(249,24): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(250,24): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(266,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(269,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(292,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(382,11): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(383,11): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(384,11): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(385,11): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(412,16): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(413,17): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(414,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(415,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(416,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(418,23): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(423,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(433,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(434,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(435,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\jrTrackedSourceZoomBox.cpp(436,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  myPlugin.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\myPlugin.cpp(68,12): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+  pluginCodeHelper.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeHelper.cpp(336,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeHelper.cpp(337,36): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeHelper.cpp(338,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeHelper.cpp(339,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  pluginCodeMain.cpp
+  pluginCodeRender.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(343,20): warning C4244: 'initializing': conversion from 'uint32_t' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(344,21): warning C4244: 'initializing': conversion from 'uint32_t' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(346,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(347,16): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(407,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(408,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(414,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(455,26): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeRender.cpp(467,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  pluginCodeSetup.cpp
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(170,35): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(174,35): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(175,35): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(176,38): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(181,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(182,39): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(183,42): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(184,39): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(194,47): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(199,45): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(204,31): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(347,8): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(348,8): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(349,8): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(350,8): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(361,50): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(362,54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(363,42): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(365,53): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\src\pluginCodeSetup.cpp(391,34): warning C4244: '=': conversion from 'float' to 'clock_t', possible loss of data
      Creating library E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\x64\Release\ObsAutoZoomSource.lib and object E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\x64\Release\ObsAutoZoomSource.exp
   Generating code
-  Previous IPDB not found, fall back to full compilation.
-  All 291 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  6 of 364 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   ObsAutoZoomSource.vcxproj -> E:\MyDocs\Programming\VersionControl\Git\ObsAutoZoomSource\x64\Release\ObsAutoZoomSource.dll

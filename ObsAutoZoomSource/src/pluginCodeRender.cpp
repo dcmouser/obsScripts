@@ -15,10 +15,7 @@ void JrPlugin::doRender() {
 	uint32_t sourceViewWidth, sourceViewHeight;
 	uint32_t sourceTrackWidth, sourceTrackHeight;
 	bool didUpdateTrackingBox = false;
-	int huntingIndex = -1;
-
-	//mydebug("In dorender stage 1.");
-
+	bool isHunting = false;
 
 	// get the TrackedSources for viewing and tracking
 	// if they are the same (ie we aren't currently hunting for a new source(camera)) then tracking source will be NULL, meaning use view source
@@ -26,9 +23,11 @@ void JrPlugin::doRender() {
 	TrackedSource* tsourcepTrack;
 	stracker.getDualTrackedViews(tsourcepView, tsourcepTrack);
 
+
+
 	// now full sources from the weak references -- remember these need to be released before we leave this function
-	obs_source_t* sourceView = tsourcepView ? tsourcepView->getFullSourceFromWeakSource() : NULL;
-	obs_source_t* sourceTrack = tsourcepTrack ? tsourcepTrack->getFullSourceFromWeakSource() : NULL;
+	obs_source_t* sourceView = tsourcepView ? tsourcepView->borrowFullSourceFromWeakSource() : NULL;
+	obs_source_t* sourceTrack = tsourcepTrack ? tsourcepTrack->borrowFullSourceFromWeakSource() : NULL;
 
 	// are we doing tracking? either at a certain rate or during oneshots or when hunting
 	bool shouldUpdateTrackingBox = false;
@@ -44,52 +43,58 @@ void JrPlugin::doRender() {
 		}
 	}
 
+
+	// do a quick size check on each source to recreate its memory if it changes sizes or on startuo
+	// ATTN: TODO see if we should do this in tick() or can automatically do it more efficiently only occasionally
+	if (tsourcepView) {
+		if (true || tsourcepView->needsRecheckForSize) {
+			tsourcepView->recheckSizeAndAdjustIfNeeded(sourceView);
+		}
+	}
+	if (tsourcepTrack) {
+		if (true || tsourcepTrack->needsRecheckForSize) {
+			tsourcepTrack->recheckSizeAndAdjustIfNeeded(sourceTrack);
+		}
+	}
 	
 	// default source to track
 	obs_source_t* sourcePointerToTrack = tsourcepTrack ? sourceTrack : sourceView;
 	TrackedSource* trackedSourcePointerToTrack = tsourcepTrack ? tsourcepTrack : tsourcepView;
-	int trackedIndexToTrack =  tsourcepTrack ? stracker.sourceIndexTracking : stracker.sourceIndexViewing;
+	int trackedIndexToTrack =  tsourcepTrack ? stracker.getTrackSourceIndex() : stracker.getViewSourceIndex();
 
-	// record the hunting index
+	
+	
+	
+	
+	
+	// record the hunting index - this is an ugly consequence of advancing the hunt before the end of this function
 	//mydebug("In dorender stage 1b.");
 	if (tsourcepTrack) {
 		// we are hunting, record the index that we are currently checking, BEFORE we advance
-		huntingIndex = stracker.sourceIndexTracking;
-
-		// we advance IF we are already in hunt mode, for next time
-		// this is awkward
-		if (shouldUpdateTrackingBox) {
-			// advance hunt? if we tracked, then YES (this test is here in case we are rate-limiting even hunt updates)
-			//mydebug("Calling advance...");
-			stracker.AdvanceHuntToNextSource();
-		}
+		isHunting = true;
 	}
 
 
+
 	bool needsRendering = false;
-	//mydebug("after possible advance we have huntindex = %d and viewindex = %d and trackindex = %d and trackedIndexToTrack = %d.", huntingIndex, stracker.sourceIndexViewing, stracker.sourceIndexTracking, trackedIndexToTrack);
+	//mydebug("after possible advance we have isHunting = %d and viewindex = %d and trackindex = %d and trackedIndexToTrack = %d.", (int)isHunting, stracker.sourceIndexViewing, stracker.sourceIndexTracking, trackedIndexToTrack);
 
 
-	// ok source view stuff
+	// OVERRIDE display
 	if (sourceView != NULL) {
-		// we have a source view
-
-		//basic info about source
-		sourceViewWidth = jrSourceGetWidth(sourceView);
-		sourceViewHeight = jrSourceGetHeight(sourceView);
-		//mydebug("in plugin_render 2b with source %s size: %dx%d outw = %d,%d [%d,%d].", tsourcepView->getName(), sourceViewWidth, sourceViewHeight, outWidth, outHeight, workingWidth, workingHeight);
+		// we have a source view; basic info about source
+		sourceViewWidth = tsourcepView->getSourceWidth();
+		sourceViewHeight = tsourcepView->getSourceHeight();
+		//mydebug("in plugin_render 2b with source %s size: %dx%d outw = %d,%d.", tsourcepView->getName(), sourceViewWidth, sourceViewHeight, outputWidthAutomatic, outputHeightAutomatic);
 
 		if (sourceViewWidth && sourceViewHeight) {
-			// valid source
-
-			// resize to height if it's changed
-			recreateStagingMemoryIfNeeded(sourceView);
+			// it's a valid source valid source
 
 			// bypass mode says do NOTHING just render source to output (note this may resize it)
 			// you can force this to always be true to bypass most processing for debug testing
-			if (false || opt_filterBypass) {
+			if (opt_filterBypass) {
 				// just render out the source untouched, and quickly
-				doRenderSourceOut(sourceView, sourceViewWidth, sourceViewHeight);
+				jrRenderSourceOut(sourceView, sourceViewWidth, sourceViewHeight);
 			} else {
 				// needs real rendering, just drop down
 				needsRendering = true;
@@ -98,64 +103,113 @@ void JrPlugin::doRender() {
 	}
 
 
-	if (!sourceTrack) {
-		// we are tracking the view
+	if (tsourcepTrack) {
+		// tracking a different source
+		sourceTrackWidth = tsourcepTrack->getSourceWidth();
+		sourceTrackHeight = tsourcepTrack->getSourceHeight();
+	}
+	else {
+		// we are tracking the same source as viewing
 		sourceTrackWidth = sourceViewWidth;
 		sourceTrackHeight = sourceViewHeight;
 	}
-	else {
-		// different source
-		sourceTrackWidth = jrSourceGetWidth(sourceTrack);
-		sourceTrackHeight = jrSourceGetHeight(sourceTrack);
-		// ATTN: we might restage here?
-	}
 
-
-	if (sourcePointerToTrack) {
-		//mydebug("in plugin_render 3b with TRACK %s size: %dx%d.", trackedSourcePointerToTrack->getName(), sourceTrackWidth, sourceTrackHeight);
-	}
 
 	//mydebug("In dorender stage 3.");
-
 	// this first test should always be true, unless source is NULL
 	if (sourcePointerToTrack && (sourceTrackWidth && sourceTrackHeight)) {
-		// ok so there are two cases where we need to call findTrackingMarkerRegionInSource
-		//  one is when we are updating the machine vision detection of the tracking box; another is when we want to SHOW the current tracking box even if its not being update
-		if (shouldUpdateTrackingBox || opt_debugDisplay) {
-			//mydebug("Calling findTrackingMarkerRegionInSource with source index #%d", trackedIndexToTrack);
-			findTrackingMarkerRegionInSource(trackedSourcePointerToTrack, sourcePointerToTrack, sourceTrackWidth, sourceTrackHeight, shouldUpdateTrackingBox, huntingIndex);
+		if (shouldUpdateTrackingBox) {
+			//mydebug("Calling hunted findTrackingMarkerRegionInSource with source index #%d (=%d)", trackedIndexToTrack, trackedSourcePointerToTrack->index);
+
+			// test to see if rendering to output area might encourage tracked source to not fall out of date
+			// this seems to prevent other output unfortunately
+			/*
+			if (DefDrawingUpdateBugfix3) {
+				jrRenderSourceOutAtSizeLoc(sourcePointerToTrack, sourceTrackWidth, sourceTrackHeight, 0,0,10,10);
+			}
+			*/
+
+			trackedSourcePointerToTrack->findTrackingMarkerRegionInSource(sourcePointerToTrack, shouldUpdateTrackingBox, isHunting);
 			didUpdateTrackingBox = true;
 		}
 	}
 
-	if (sourceView) {
+
+	// ATTN: WE *MUST* CALL ADVANCE HERE (early)-- otherwise if we try doing this at end of function, and in the meanwhile initiate a NEW hunt from tsourcepView->updateZoomCropBoxFromCurrentCandidate() we will advance over it before we test the first hunt index
+	// this is awkward
+	// advance hunt index
+	if (didUpdateTrackingBox) {
+		// if we were tracking something other than our own (ie we were hunting), then advance any hunting index
+		if (tsourcepTrack) {
+			//mydebug("Calling advance hunt...");
+			stracker.AdvanceHuntToNextSource();
+		}
+	}
+
+
+	bool needsUpdateZoomBox = true;
+	if (needsUpdateZoomBox && sourceView) {
 		// update target zoom box from tracking box -- note this may happen EVEN when we are not doing a tracking box update, to provide smooth movement to target
 		// ATTN: BUT.. do we want to do this on tracking source or viewing source?
 		// ATTN: new -- calling it on VIEW
+		// ATTN: WARNING - this can trigger a new hunt, so make sure AdvanceHuntToNextSource is called first so we dont advance over new hunt's first index before the next cycle
 		tsourcepView->updateZoomCropBoxFromCurrentCandidate();
 	}
 
 	//mydebug("In dorender stage 4.");
 
-	// ok we have (may have) updated tracking info for EITHER the viewing source or the tracking source; we did if we are debugging for sure
 	// now final rendering (either with debug info, or with zoom crop effect, unless we bypasses above)
 	if (needsRendering) {
+		//mydebug("In dorender stage 4b.");
 		// if we are in debugDisplayMode then we just display the debug overlay as our plugin and do not crop
 		if (opt_debugDisplay) {
-			// overlay debug info on internal buffer; this uses TRACKED size
-			// note that in debug mode we always show the currently TRACKING source (not the view source)
-			overlayDebugInfoOnInternalDataBuffer(trackedSourcePointerToTrack);
+			// show EVERY source in a multiview format, with overlay debug info on internal chroma buffer; this uses TRACKED size
 			//  then render from internal planning data texture to display for debug purposes
-			doRenderFromInternalMemoryToFilterOutput();
+			// note that we do NOT force recalculation of boxes and marker detection here -- that is done only as normal, so the non-viewed sources here will be slow to update and seem freeze frames on their last tracked/hunted state
+			// which is what we want so we can see how frequently they are being hunted.
 			//mydebug("in plugin_render 4b did DEBUG on %s size: %dx%d.", trackedSourcePointerToTrack->getName(), sourceTrackWidth, sourceTrackHeight);
-		} else if (tsourcepView->lookingBoxReady && !(tsourcepView->lookingx1 == 0 && tsourcepView->lookingy1 == 0 && tsourcepView->lookingx2 == outWidth-1 && tsourcepView->lookingy2 == outHeight-1 && outWidth == workingWidth && outHeight == workingHeight)) {
-			// we dont do a debug overlay render but instead crop in on the tracking box, of the VIEW source
-			doRenderAutocropBox(tsourcepView, sourceView, sourceViewWidth, sourceViewHeight);
+			if (true) {
+				int sourceCount = stracker.getSourceCount();
+				int dbgw = outputWidthPlugin / sourceCount;
+				int dbgh = outputHeightPlugin / sourceCount;
+				for (int i = 0; i < sourceCount; ++i) {
+					TrackedSource* tsp = stracker.getTrackedSourceByIndex(i);
+					if (tsp && tsp->sourceWidth > 0) {
+						// new test, lets also force tracking update on EVERY cycle
+						if (DefDebugUpdateTrackingOfEverySourceDuringRender && tsp!=trackedSourcePointerToTrack /*&& tsp != tsourcepView && tsp != tsourcepTrack*/) {
+							obs_source_t* osp = tsp->borrowFullSourceFromWeakSource();
+							tsp->findTrackingMarkerRegionInSource(osp, true, false);
+							tsp->releaseBorrowedFullSource(osp);
+						}
+						// ok render this source into multiview
+						int dbgx1 = i * dbgw;
+						int dbgy1 = 0;
+						int dbgx2 = dbgx1 + dbgw;
+						int dbgy2 = outputHeightPlugin;
+						tsp->overlayDebugInfoOnInternalDataBuffer();
+						tsp->doRenderFromInternalMemoryToFilterOutput(dbgx1, dbgy1, dbgx2, dbgy2);
+					}
+				}
+			} 
+		} else if (DefBypassZoomOnUntouchedOutput && (!tsourcepView->lookingBoxReady || (tsourcepView->lookingx1 == 0 && tsourcepView->lookingy1 == 0 && tsourcepView->lookingx2 == outputWidthPlugin-1 && tsourcepView->lookingy2 == outputHeightPlugin-1))
+			&& (tsourcepView->sourceWidth==outputWidthPlugin && tsourcepView->sourceHeight==outputHeightPlugin && outputWidthPlugin == outputWidthAutomatic && outputHeightPlugin == outputHeightAutomatic)) {
 			//mydebug("in plugin_render 4c did render zoomcrop on %s size: %dx%d.", tsourcepView->getName(), sourceViewWidth, sourceViewHeight);
+			// we could disable this check if it's not worth it -- we should make sure if occasionally gets used
+			// this check is done here just to make things go faster in case of passing through
+			// nothing to do at all -- either we have not decided a place to look OR we are looking at the entire view of a non-adjusted view, so nothing needs to be done to the view
+			jrRenderSourceOut(sourceView, sourceViewWidth, sourceViewHeight);
 		}
 		else {
-			// nothing to do at all -- either we have not decided a place to look OR we are looking at the entire view of a non-adjusted view, so nothing needs to be done to the view
-			doRenderSourceOut(sourceView, sourceViewWidth, sourceViewHeight);
+			// render the zoom and crop if any; THIS IS THE MAIN REAL ZOOMCROP RENDER
+			if (fadeEndingSourceIndex == tsourcepView->index && updateFadePosition()) {
+				// fade between some other source and tsourcepView
+				tsourcepView->doRenderAutocropBoxFadedToScreen(sourceView, stracker.getTrackedSourceByIndex(fadeStartingSourceIndex), fadePosition);
+			}
+			else {
+				// normal view
+				tsourcepView->doRenderAutocropBoxToScreen(sourceView);
+			}
+
 		}
 		needsRendering = false;
 	}
@@ -169,11 +223,51 @@ void JrPlugin::doRender() {
 
 	//mydebug("In dorender stage 5.");
 
+	// this is a kludge needed for some obs bug(?) which does not update sources when we do a one-shot peek at them, so we have to continuously poll them on every cycle
+	// new 9/7/22 im only doing this when we are on an updatecycle, so update rate will slow this down too
+	if (DefDebugTouchAllSourcesOnRenderCycle && shouldUpdateTrackingBox) {
+		// this is a test to see if "touching" all other sources every cycle keeps them from getting stuck in old frames
+		int sourceCount = stracker.getSourceCount();
+		for (int i = 0; i < sourceCount; ++i) {
+			TrackedSource* tsp = stracker.getTrackedSourceByIndex(i);
+			if (true && tsp != tsourcepView && tsp != tsourcepTrack) {
+				tsp->touchRefreshDuringRenderCycle();
+			}
+		}
+	}
+
+
 	// release source (it's ok if we pass NULL)
-	stracker.freeFullSource(sourceView); sourceView = NULL;
-	stracker.freeFullSource(sourceTrack); sourceTrack = NULL;
+	tsourcepView->releaseBorrowedFullSource(sourceView); sourceView = NULL;
+	tsourcepTrack->releaseBorrowedFullSource(sourceTrack); sourceTrack = NULL;
 }
 //---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -239,380 +333,18 @@ void JrPlugin::autoZoomSetEffectParamsZoomCrop(uint32_t rwidth, uint32_t rheight
 
 
 
-//---------------------------------------------------------------------------
-// this took me about 7 hours of pure depressive hell to figure out
-//
-void JrPlugin::myRenderSourceIntoTexture(obs_source_t* source, gs_texrender_t *tex, uint32_t stageWidth, uint32_t stageHeight, uint32_t sourceWidth, uint32_t sourceHeight) {
-	// render source onto a texture
-
-	//mydebug("myRenderSourceIntoTexture (%d,%d) (%d,%d) (%d,%d).", stageWidth, stageHeight, sourceWidth, sourceHeight, outWidth, outHeight);
-
-	// seems critical wtf
-	if (tex) {
-		gs_texrender_reset(tex);
-	}
-	if (tex && !gs_texrender_begin(tex, stageWidth, stageHeight)) {
-		return;
-	}
-
-	// save blend state
-	gs_blend_state_push();
-
-	// blend mode
-	//gs_blend_function_separate(GS_BLEND_SRCALPHA, GS_BLEND_INVSRCALPHA, GS_BLEND_ONE, GS_BLEND_INVSRCALPHA);
-	gs_blend_function(GS_BLEND_ONE, GS_BLEND_INVSRCALPHA);
-	bool custom_draw = (OBS_SOURCE_CUSTOM_DRAW) != 0;
-	bool async = (0 & OBS_SOURCE_ASYNC) != 0;
-	struct vec4 clear_color;
-	vec4_zero(&clear_color);
-	gs_clear(GS_CLEAR_COLOR, &clear_color, 0.0f, 0);
-	gs_ortho(0.0f, (float)sourceWidth, 0.0f, (float)sourceHeight, -100.0f, 100.0f);
-	// RENDER THE SOURCE
-	obs_source_video_render(source);
-	//
-	// end stuff
-	gs_blend_state_pop();
-	if (tex) {
-		gs_texrender_end(tex);
-	}
-}
-
-
-void JrPlugin::myRenderEffectIntoTexture(obs_source_t* source, gs_texrender_t *tex, gs_effect_t* effect, gs_texrender_t *inputTex, uint32_t stageWidth, uint32_t stageHeight) {
-	// render effect onto texture using an input texture (set effect params before invoking)
-
-	if (tex) {
-		gs_texrender_reset(tex);
-	}
-	if (tex && !gs_texrender_begin(tex, stageWidth, stageHeight)) {
-		return;
-	}
-
-	// save blend state
-	gs_blend_state_push();
-
-	// blend mode
-	gs_blend_function(GS_BLEND_ONE, GS_BLEND_INVSRCALPHA);
-
-	// tell chroma effect to use the rendered image as its input
-	gs_eparam_t *image = gs_effect_get_param_by_name(effect, "image");
-	gs_texture_t *obsInputTex = gs_texrender_get_texture(inputTex);
-	gs_effect_set_texture(image, obsInputTex);
-
-	struct vec4 clear_color;
-	vec4_zero(&clear_color);
-	gs_clear(GS_CLEAR_COLOR, &clear_color, 0.0f, 0);
-	//
-	// ATTN: this seems to be important for plugin property dialog preview
-	gs_ortho(0.0f, (float)stageWidth, 0.0f, (float)stageHeight, -100.0f, 100.0f);
-
-	while (gs_effect_loop(effect, "Draw")) {
-		gs_draw_sprite(NULL, 0, stageWidth, stageHeight);
-	}
-
-	// end stuff
-	gs_blend_state_pop();
-	if (tex) {
-		gs_texrender_end(tex);
-	}
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
 
 
 //---------------------------------------------------------------------------
-// see source_render
-void JrPlugin::doRenderSourceOut(obs_source_t* source, uint32_t rwidth, uint32_t rheight) {
-	// attempts to make it size properly in properties
-	if (rwidth == 0) {
-		// recompute
-		rwidth = jrSourceGetWidth(source);
-		rheight = jrSourceGetHeight(source);
-	}
-	//mydebug("Rendering out source of size %d x %d.", rwidth, rheight);
-	if (rwidth == 0 || rheight == 0) {
-		//mydebug("in doRenderSourceOut aborting because of dimensions 0.");
-		return;
-	}
-	// render it out
-	myRenderSourceIntoTexture(source, NULL, rwidth, rheight, rwidth, rheight);
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-void JrPlugin::doRenderWorkFromEffectToStageTexRender(gs_effect_t* effectChroma, obs_source_t* source, uint32_t rwidth, uint32_t rheight) {
-	// STAGE 1 render SOURCE
-	// render into texrender2 (temporary) texture - to a stage x stage dimension
-	myRenderSourceIntoTexture(source, texrender2, stageWidth, stageHeight, rwidth, rheight);
-
-	// STAGE 2 - render effect
-	// first set effect params
-	autoZoomSetEffectParamsChroma(rwidth, rheight);
-	// then render effect into target texture texrender
-	myRenderEffectIntoTexture(source, texrender, effectChroma, texrender2, stageWidth, stageHeight);
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-void JrPlugin::doRenderWorkFromStageToInternalMemory() {
-	bool stageMemoryReady = false;
-	if (data) {
-		// default OBS plugin since we don't want to do anything
-		gs_effect_t *effectDefault = obs_get_base_effect(OBS_EFFECT_DEFAULT);
-		gs_texture_t *tex = gs_texrender_get_texture(texrender);
-		if (tex) {
-			gs_stage_texture(staging_texture, tex);
-			//
-			uint8_t *idata;
-			uint32_t ilinesize;
-			WaitForSingleObject(mutex, INFINITE);
-			if (gs_stagesurface_map(staging_texture, &idata, &ilinesize)) {
-				//mydebug("ATTN: JR gs_stage_texture 2.\n");
-				memcpy(data, idata, ilinesize * stageHeight);
-				// update our stored data linesize
-				dlinesize = ilinesize;
-				gs_stagesurface_unmap(staging_texture);
-				stageMemoryReady = true;
-				}
-			ReleaseMutex(mutex);
-		}
-	}
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-void JrPlugin::overlayDebugInfoOnInternalDataBuffer(TrackedSource* tsourcep) {
-	// overlay debug 
-	int x1, y1, x2, y2;
-	int pixelVal;
-
-	if (true) {
-		// show all regions
-		JrRegionSummary* region;
-		//int pixelVal = 0x00FF00FF;
-		pixelVal = 0xFF0000FF;
-		JrRegionDetector* rdp = stracker.getRegionDetectorp();
-		for (int i = 0; i < rdp->foundRegions; ++i) {
-			region = rdp->getRegionpByIndex(i);
-			//mydebug("Overlaying region %d (%d,%d,%d,%d).", i, region->x1, region->y1, region->x2, region->y2);
-			//pixelVal = calcIsValidmarkerRegion(region) ? 0x88FF55FF : 0xFF0000FF;
-			pixelVal = stracker.calcIsValidmarkerRegion(region) ?   0x88FF55FA : 0xFF0000FF;
-			x1 = region->x1-1;
-			y1 = region->y1-1;
-			x2 = region->x2+1;
-			y2 = region->y2+1;
-			//
-			if (x1 < 0) { x1 = 0; }
-			if (y1 < 0) { y1 = 0; }
-			if (x2 >= stageWidth) { x2 = stageWidth-1; }
-			if (y2 >= stageHeight) { y2 = stageHeight-1; }
-			//
-			RgbaDrawRectangle((uint32_t*)data, dlinesize, x1, y1, x2, y2, pixelVal);
-		}
-	}
-
-	// show found cropable area
-	if (true && tsourcep->markerBoxReady && (tsourcep->markerx1 != tsourcep->lookingx1 || tsourcep->markery1 != tsourcep->lookingy1 || tsourcep->markerx2 != tsourcep->lookingx2 || tsourcep->markery2 != tsourcep->lookingy2)) {
-		// modify contents of our internal data to show border around box
-		//mydebug("Overlaying tracking box (%d,%d,%d,%d).", markerx1, markery1, markerx2, markery2);
-		pixelVal = 0xFF22FFFF;
-		x1 = tsourcep->markerx1;
-		y1 = tsourcep->markery1;
-		x2 = tsourcep->markerx2;
-		y2 = tsourcep->markery2;
-		RgbaDrawRectangle((uint32_t*)data, dlinesize, (float)x1/stageShrink, (float)y1/stageShrink, (float)x2/stageShrink, (float)y2/stageShrink, pixelVal);
-	}
-	if (true && tsourcep->lookingBoxReady) {
-		// modify contents of our internal data to show border around box
-		//mydebug("Overlaying crop box (%d,%d,%d,%d).", bx1, by1, bx2, by2);
-		pixelVal = 0xFFFFFFFF;
-		x1 = tsourcep->lookingx1;
-		y1 = tsourcep->lookingy1;
-		x2 = (float)tsourcep->lookingx2;
-		y2 = (float)tsourcep->lookingy2;
-		if (x2 > workingWidth-1) {
-			x2 = workingWidth - 1;
-		}
-		if (y2 > workingHeight-1) {
-			y2 = workingHeight - 1;
-		}
-		RgbaDrawRectangle((uint32_t*)data, dlinesize, (float)x1/stageShrink, (float)y1/stageShrink, (float)x2/stageShrink, (float)y2/stageShrink, pixelVal);
-	}
-}
-	
-	
-	
-void JrPlugin::doRenderFromInternalMemoryToFilterOutput() {
-	bool flagCreateNewTex = false;
-	bool flagUseDrawingTex = true;
-
-	// try to render to screen the previously generated texture (possibly scaling up)
-
-	// default OBS plugin since we don't want to do anything
-	gs_effect_t *effectDefault = obs_get_base_effect(OBS_EFFECT_DEFAULT);
-	gs_texture_t *tex = gs_texrender_get_texture(texrender);
-	gs_texture_t* texOut = NULL;
-	gs_texture_t* texRender = tex;
-
-	// copy our data modified pixels into a texture to render
-	//mydebug("doRenderFromInternalMemoryToFilterOutput (%d,%d,%d,%d).", stageWidth, stageHeight, outWidth, outHeight);
-
-	// test write out to drawing texture for plugin output
-	// see https://gitlab.hs-bremerhaven.de/jpeters/obs-studio/-/blob/master/test/test-input/sync-pair-vid.c
-	// see https://discourse.urho3d.io/t/urho3d-as-plugin-for-obs-studio/6849/7
-	uint8_t *ptr;
-	uint32_t ilinesize;
-	if (flagCreateNewTex) {
-		// this will be destroyed at end
-		texRender = gs_texture_create(stageWidth, stageHeight, GS_RGBA, 1, NULL, GS_DYNAMIC);
-	} else if (flagUseDrawingTex) {
-		texRender = drawing_texture;			
-	}
-
-	// copy from our internal buffer to the output texture in RGBA format
-	if (gs_texture_map(texRender, &ptr, &ilinesize)) {
-		//mydebug("ATTN: JR inside texture map1: %d.\n",ilinesize);	
-		//fill_texture((uint32_t *)ptr, 0xFFFFFFFF);
-		memcpy((uint32_t*)ptr, data, ilinesize * stageHeight);
-		gs_texture_unmap(texRender);
-	}
-
-
-	// render from texRender to plugin output
-	gs_eparam_t *image = gs_effect_get_param_by_name(effectDefault, "image");
-	gs_effect_set_texture(image, texRender);
-	// just a simple draw of texture
-	// test
-	if (false) {
-		gs_enable_depth_test(false);
-		//gs_set_cull_mode(GS_NEITHER);
-		//gs_ortho(0.0f, (float)stageWidth, 0.0f, (float)stageHeight, -100.0f, 100.0f);
-		//gs_set_viewport(0, 0, stageWidth, stageHeight);
-	}
-	//
-	// note we are willing to scale it up to full size from smaller stage
-	while (gs_effect_loop(effectDefault, "Draw")) {
-		gs_draw_sprite(texRender, 0, outWidth, outHeight);
-	}
-
-	// free temporary tex?
-	if (flagCreateNewTex) {
-		gs_texture_destroy(texRender);
-	}
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-void JrPlugin::findTrackingMarkerRegionInSource(TrackedSource* tsourcep, obs_source_t* source, uint32_t rwidth, uint32_t rheight, bool shouldUpdateTrackingBox, int huntingIndex) {
-
-	// part 1
-	// Render to intermediate target texrender instead of output of plugin (screen)
-	doRenderWorkFromEffectToStageTexRender(effectChroma, source,  rwidth,  rheight);
-
-	// part 2
-	// ok now the output is in texrender texture where we can map it and copy it to private user memory
-	doRenderWorkFromStageToInternalMemory();
-
-	// part 3
-	// update autotracking by doing machine vision on internal memory copy of effectChroma output
-	if (shouldUpdateTrackingBox) {
-		//mydebug("Doing part 3 stracker.analyzeSceneAndFindTrackingBox.");
-		stracker.analyzeSceneAndFindTrackingBox(tsourcep, data, dlinesize, huntingIndex);
-	}
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-void JrPlugin::doRenderAutocropBox(TrackedSource* tsourcep, obs_source_t* source, int rwidth, int rheight) {
-	// ATTN: TODO - run crop and zoom effect
-
-
-	// ATTN: we only need to really do this when box location changes
-	if (true) {
-		doCalculationsForZoomCrop(tsourcep);
-	}
-
-	// now render
-
-	// STAGE 1 render SOURCE
-	// render into texrender2 (temporary) texture - to a stage x stage dimension
-	myRenderSourceIntoTexture(source, texrender2, rwidth, rheight, rwidth, rheight);
-
-	// STAGE 2 - render effect to output
-	// first set effect params
-	autoZoomSetEffectParamsZoomCrop(rwidth, rheight);
-	// then render effect into target texture texrender
-	myRenderEffectIntoTexture(source, NULL, effectZoomCrop, texrender2, rwidth, rheight);
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------
-bool JrPlugin::doCalculationsForZoomCrop(TrackedSource* tsourcep) {
+bool JrPlugin::doCalculationsForZoomCropEffect(TrackedSource* tsourcep) {
 	// this code need refactoring
-	//float width = width;
-	//float height = height;
+	// a good part of this code is dealing with situation when we have a forced output size different from the full size of our source
 
-	float sourceWidth = workingWidth;
-	float sourceHeight = workingHeight;
+	float sourceWidth = tsourcep->getSourceWidth();
+	float sourceHeight = tsourcep->getSourceHeight();
 
-	float oWidth = outWidth;
-	float oHeight = outHeight;
+	float oWidth = outputWidthPlugin;
+	float oHeight = outputHeightPlugin;
 
 
 	// sanity checks
@@ -620,7 +352,6 @@ bool JrPlugin::doCalculationsForZoomCrop(TrackedSource* tsourcep) {
 		return false;
 	}
 
-	
 	// target region size
 	int bx1 = tsourcep->lookingx1;
 	int by1 = tsourcep->lookingy1;

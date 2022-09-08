@@ -2,6 +2,7 @@
 
 //---------------------------------------------------------------------------
 #include <windows.h>
+#include <ctime>
 //
 // obs
 #include <obs-module.h>
@@ -74,6 +75,9 @@ extern char* SETTING_zcEasing_choices[];
 //---------------------------------------------------------------------------
 class JrPlugin {
 public:
+	HANDLE mutex;
+	SourceTracker stracker;
+public:
 	// obs pointer
 	obs_source_t *context;
 
@@ -104,6 +108,9 @@ public:
 	struct vec2 clip_ul;
 	struct vec2 clip_lr;
 
+	// fade effect
+	gs_effect_t *effectFade;
+
 	// options
 	bool opt_zcPreserveAspectRatio;
 	//
@@ -130,35 +137,32 @@ public:
 	int opt_zcAlign;
 	int opt_zcMode;
 	float opt_zcMaxZoom;
-	char opt_forcedOutputResBuf[80];
-	int forcedOutputWidth, forcedOutputHeight;
+	char opt_OutputSizeBuf[80];
 	float forcedOutputAspect;
 	int opt_zcEasing;
+
+	bool opt_enableMarkerlessCoordinates;
+	bool opt_enableAutoSourceSwitching;
+	int opt_initialViewSourceIndex;
 
 	// markerless stuff - for when we can't find markers, do we show entire view or some subset
 	char opt_markerlessCycleListBuf[DefMarkerlessCycleListBufMaxSize];
 	int opt_markerlessCycleIndex;
+	float opt_fadeDuration;
+
+
 	int markerlessSourceIndex;
+	int stableSourceSwitchDesireCount;
 	int markerlessCoordsX1, markerlessCoordsY1, markerlessCoordsX2, markerlessCoordsY2;
 
-	// old
-	/*
-	char opt_markerlessCoordsBuf[80];
-	*/
-
-	//
-	int stageArea;
-	float stageShrink;
-
 	// internals
-	bool needsRebuildStaging;
 	// source info
-	uint32_t workingWidth;
-	uint32_t workingHeight;
-	uint32_t stageWidth;
-	uint32_t stageHeight;
-	uint32_t outWidth;
-	uint32_t outHeight;
+	//uint32_t workingWidth;
+	//uint32_t workingHeight;
+	uint32_t outputWidthAutomatic;
+	uint32_t outputHeightAutomatic;
+	int outputWidthPlugin;
+	int outputHeightPlugin;
 
 	// hotkeys
 	obs_hotkey_id hotkeyId_ToggleAutoUpdate;
@@ -167,24 +171,18 @@ public:
 	obs_hotkey_id hotkeyId_ToggleDebugDisplay;
 	obs_hotkey_id hotkeyId_ToggleBypass;
 	obs_hotkey_id hotkeyId_CycleSource;
-
-	// new staging texture area and memory
-	gs_texrender_t *texrender;
-	gs_texrender_t *texrender2;
-	gs_stagesurf_t *staging_texture;
-	gs_texture_t *drawing_texture;
-	uint8_t *data;
-	uint32_t dlinesize;
-	bool ready;
-	HANDLE mutex;
-	//
-	SourceTracker stracker;
+	obs_hotkey_id hotkeyId_CycleMarkerlessList;
+	obs_hotkey_id hotkeyId_CycleMarkerlessListBack;
+	obs_hotkey_id hotkeyId_toggleMarkerlessUse;
+	obs_hotkey_id hotkeyId_toggleAutoSourceSwitching;
 
 	// to keep tracking of update rate and one-shot adjustment
 	bool trackingOneShot;
 	int trackingUpdateCounter;
 	//
 	bool in_enumSources;
+	//
+	bool sourcesHaveChanged;
 	//
 	// computed options
 	float computedChangeMomentumDistanceThresholdMoving;
@@ -197,64 +195,55 @@ public:
 	int computedMomentumCounterTargetMissingMarkers;
 	int computedMomentumCounterTargetNormal;
 	float computedMinDistFractionalBetweenMarkersToReject;
-
 public:
+	int fadeStartingSourceIndex, fadeEndingSourceIndex;
+	float fadePosition;
+	clock_t fadeStartTime;
+	clock_t fadeEndTime;
+	clock_t fadeDuration;
+public:
+	// note sure if this is right way to get the source represented by this plugin
+	obs_source_t* getThisPluginSource() { return context; }
+	//
 	void updateSettingsOnChange(obs_data_t* settings);
-	void recreateStagingMemoryIfNeeded(obs_source_t* source);
-	void freeBeforeReallocateEffectsAndTexRender();
-	void freeBeforeReallocateFilterTextures();
-	void freeBeforeReallocateNonGraphicData();
+	//void recheckSizeAndAdjustIfNeeded(obs_source_t* source);
+	//void freeBeforeReallocateTexRender();
+	//void freeBeforeReallocateFilterTextures();
+	//void freeBeforeReallocateNonGraphicData();
+
+	void freeBeforeReallocateEffects();
 	bool initFilterInGraphicsContext();
-	bool initFilterOutsideGraphicsContext(obs_source_t* context);
+	bool initFilterOutsideGraphicsContext();
 	//
 	void doTick();
 	void doRender();
 	//
-	void findTrackingMarkerRegionInSource(TrackedSource* tsourcep, obs_source_t* source, uint32_t rwidth, uint32_t rheight, bool shouldUpdateTrackingBox, int huntingIndex);
-	void overlayDebugInfoOnInternalDataBuffer(TrackedSource* tsourcep);
-	void doRenderAutocropBox(TrackedSource* tsourcep, obs_source_t* source, int rwidth, int rheight);
-	bool doCalculationsForZoomCrop(TrackedSource* tsourcep);
 
-	bool findNewCandidateTrackingBox(TrackedSource* tsourcep);
-	void analyzeSceneAndFindTrackingBox(TrackedSource* tsourcep);
+	bool doCalculationsForZoomCropEffect(TrackedSource* tsourcep);
 
-	void doRenderFromInternalMemoryToFilterOutput();
 	void parseTextCordsString(const char* coordStrIn, int* x1, int* y1, int* x2, int* y2, int defx1, int defy1, int defx2, int defy2, int maxwidth, int maxheight);
 	int parseCoordStr(const char* cpos, int max);
 	//
 	void forceUpdatePluginSettingsOnOptionChange();
-	void updateCoordsAndOutputSize();
-	void clearAllBoxReadies();
 	//
-	void updateMarkerlessCoordsCycle();
-	bool setMarkerlessCoordsForSourceNumberAndZoomLevel(int sourceNumber, float zoomLevel);
-
-	void analyzeSceneFindComponentMarkers();
-	void markRegionsQuality();
+	void updateOutputSize();
+	bool updateMarkerlessCoordsCycle();
+	//
+	bool setMarkerlessCoordsForSourceNumberAndZoomLevel(int sourceNumber, float zoomLevel, char* alignbuf);
+	void markerlessCycleListAdvanceForward();
+	void markerlessCycleListAdvanceBackward();
+	void markerlessCycleListAdvanceDelta(int delta);
 
 	void reRegisterHotkeys();
 	void fillCoordsWithMarkerlessCoords(int* x1, int* y1, int* x2, int* y2);
+	void fillCoordsWithMarkerlessCoords(float* x1, float* y1, float* x2, float* y2);
 	void addPropertyForASourceOption(obs_properties_t* pp, const char* name, const char* desc);
-	void doRenderSourceOut(obs_source_t* source, uint32_t rwidth, uint32_t rheight);
-	void checkAndUpdateAllTrackingSources();
-
-//
+	
 	void jrAddPropertListChoices(obs_property_t* comboString, const char** choiceList);
 	int jrAddPropertListChoiceFind(const char* strval, const char** choiceList);
-	void RgbaDrawPixel(uint32_t* textureData, int ilinesize, int x, int y, int pixelVal);
-	void RgbaDrawRectangle(uint32_t* textureData, int ilinesize, int x1, int y1, int x2, int y2, int pixelVal);
-	//
-
-	int jrSourceGetWidth(obs_source_t* src);
-	int jrSourceGetHeight(obs_source_t* src);
 	//
 	void autoZoomSetEffectParamsChroma(uint32_t rwidth, uint32_t rheight);
 	void autoZoomSetEffectParamsZoomCrop(uint32_t rwidth, uint32_t rheight);
-	void myRenderSourceIntoTexture(obs_source_t* source, gs_texrender_t* tex, uint32_t stageWidth, uint32_t stageHeight, uint32_t sourceWidth, uint32_t sourceHeight);
-	void myRenderEffectIntoTexture(obs_source_t* source, gs_texrender_t* tex, gs_effect_t* effect, gs_texrender_t* inputTex, uint32_t stageWidth, uint32_t stageHeight);
-	void doRenderWorkFromEffectToStageTexRender(gs_effect_t* effectChroma, obs_source_t* source, uint32_t rwidth, uint32_t rheight);
-	//
-	void doRenderWorkFromStageToInternalMemory();
 
 	//
 	SourceTracker* getSourceTrackerp() { return &stracker; };
@@ -262,6 +251,15 @@ public:
 	void multiSourceTargetChanged();
 public:
 	void updateComputedOptions();
+	bool updateComputeAutomaticOutputSize();
+public:
+	void onSourcesHaveChanged();
+	void setSourcesChanged(bool val) { sourcesHaveChanged = val; }
+public:
+	void initiateFade(int startingSourceIndex, int endingSourceIndex);
+	void cancelFade();
+	bool updateFadePosition();
+	bool isFading() { return (fadeStartingSourceIndex != -1); }
 };
 //---------------------------------------------------------------------------
 

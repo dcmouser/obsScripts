@@ -19,8 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\jrfuncs.cpp" />
     <ClCompile Include="..\src\jrRegionDetector.cpp" />
     <ClCompile Include="..\src\jrSourceTracker.cpp" />
+    <ClCompile Include="..\src\jrTrackedSourceMisc.cpp" />
+    <ClCompile Include="..\src\jrTrackedSourceRender.cpp" />
+    <ClCompile Include="..\src\jrTrackedSourceZoomBox.cpp" />
+    <ClCompile Include="..\src\jrTrackedSource.cpp" />
+    <ClCompile Include="..\src\obsHelpers.cpp" />
     <ClCompile Include="..\src\pluginCodeHelper.cpp" />
     <ClCompile Include="..\src\pluginCodeRender.cpp" />
     <ClCompile Include="..\src\pluginCodeSetup.cpp" />
@@ -32,8 +38,10 @@
     <Library Include="..\..\obs-studio3\release\libobs\RelWithDebInfo\obs.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\jrfuncs.h" />
     <ClInclude Include="..\src\jrRegionDetector.h" />
     <ClInclude Include="..\src\jrSourceTracker.h" />
+    <ClInclude Include="..\src\jrTrackedSource.h" />
     <ClInclude Include="..\src\myPlugin.h" />
     <ClInclude Include="..\src\ObsAutoZoomSource.h" />
     <ClInclude Include="..\src\obsHelpers.h" />

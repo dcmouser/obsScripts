@@ -80,14 +80,31 @@
 #define Def_zcMode_OnlyZoom	2
 #define SETTING_zcMaxZoom						"MaxZoom"
 #define TEXT_zcMaxZoom							obs_module_text("MaxZoom")
-#define SETTING_zcForcedOutputRes				"ForcedOutputRes"
-#define TEXT_zcForcedOutputRes					obs_module_text("ForcedOutputRes")
-#define SETTING_Def_zcForcedOutputRes			""
+//
+#define SETTING_zcOutputSize					"OutputSize"
+#define TEXT_zcOutputSize						obs_module_text("OutputSize")
+#define SETTING_Def_zcOutputSize				"1920x1080"
+
+#define SETTING_initialViewSourceIndex			"initialViewSourceIndex"
+#define TEXT_initialViewSourceIndex				obs_module_text("initialViewSourceIndex")
+#define SETTING_DEF_initialViewSourceIndex		0
 
 #define SETTING_zcMarkerlessCycleList			"markerlessCycleList"
 #define TEXT_zcMarkerlessCycleList				obs_module_text("markerlessCycleList")
-#define SETTING_Def_zcMarkerlessCycleList		"1,0 | 2,0 | 2,1 | 2,2"
+#define SETTING_Def_zcMarkerlessCycleList		"s=1,z=0 | s=2,z=0 | s=2,z=1,a=mc | s=2,z=2,a=lc"
 #define DefMarkerlessCycleListBufMaxSize		255
+#define SETTING_markerlessCycleIndex			"markerlessCycleIndex"
+#define TEXT_markerlessCycleIndex				obs_module_text("markerlessCycleIndex")
+#define SETTING_Def_markerlessCycleIndex		0
+
+#define SETTING_enableAutoSourceSwitching		"enableAutoSourceSwitching"
+#define TEXT_enableAutoSourceSwitching			obs_module_text("enableAutoSourceSwitching")
+#define SETTING_Def_enableAutoSourceSwitching	true
+#define SETTING_enableMarkerlessCoordinates		"enableMarkerlessCoordinates"
+#define TEXT_enableMarkerlessCoordinates		obs_module_text("enableMarkerlessCoordinates")
+#define SETTING_Def_enableMarkerlessCoordinates	true
+
+
 /*
 #define SETTING_zcMarkerlessCoords				"markerlessCoords"
 #define TEXT_zcMarkerlessCoords					obs_module_text("markerlessCoords")
@@ -124,13 +141,15 @@
 //---------------------------------------------------------------------------
 // non-confiruable options
 
+// try to speed up render if we are just rendering the exact source as it no zoom/crop/etc.
+#define DefBypassZoomOnUntouchedOutput					true
 // for the showImage effect option alpha value
 #define DefEffectAlphaShowImage							0.50f
 // the larget the slower the box moves as max speed
 #define DefMaxMoveBoxSpeedRatio							15.0f
 // momentum thresholds
 #define DefMomentumCounterTargetNormal					5
-#define DefMomentumCounterTargetMissingMarkers			30
+#define DefMomentumCounterTargetMissingMarkers			15
 //
 
 #define DefChangeMomentumDistanceThresholdMoving		(opt_zcBoxMoveDistance/2)
@@ -159,7 +178,14 @@
 #define DefAlwaysUpdateTrackingWhenHunting				true
 //
 #define DefPollMissingMarkersZoomOutCheckMult			10
-#define DefPollAveragingToNearTargetZoomInCheckMult		20
+
+// set this to low value to fix failure to zoom in; set long to try to find insane obs bug failure of source to update
+#define DefSettledLookingPositionRecheckLimit			100
+
+#define Def_StableSourceSwitchCountThreshold			10
+
+#define DefForSingleValidRegionAssumePrevious			true
+#define DefMarkerlessStreakCyclesBeforeSwitch			2
 //---------------------------------------------------------------------------
 
 
@@ -171,7 +197,16 @@
 
 
 //---------------------------------------------------------------------------
-#define jrmax4(a,b,c,d) max(max(a,b),max(c,d))
+// just to help us do temporary quick debug checks
+#define DefDebugTest									false
+#define DefDebugDisableMarkerlessJumping				false
+//#define DefDebugSkipLongTermChecking					true
+#define DefClearDrawingSpacedForDebugging				true
+#define DefDrawingUpdateBugfix1							true
+#define DefDrawingUpdateBugfix2							true
+#define DefDrawingUpdateBugfix3							true
+//
+#define DefDebugUpdateTrackingOfEverySourceDuringRender	false
+#define DefDebugTouchAllSourcesOnRenderCycle			true
 //---------------------------------------------------------------------------
-
 

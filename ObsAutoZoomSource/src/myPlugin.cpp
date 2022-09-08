@@ -103,15 +103,21 @@ void onHotkeyCallback(void *data, obs_hotkey_id id, obs_hotkey_t *key, bool pres
 	} else if (id == plugin->hotkeyId_CycleSource) {
 		plugin->stracker.cycleWorkingSource();
 	}
-	else {
+	else if (id == plugin->hotkeyId_CycleMarkerlessList) {
+		plugin->markerlessCycleListAdvanceForward();
+	} else if (id == plugin->hotkeyId_CycleMarkerlessListBack) {
+		plugin->markerlessCycleListAdvanceBackward();
+	} else if (id == plugin->hotkeyId_toggleMarkerlessUse) {
+		plugin->opt_enableMarkerlessCoordinates = !plugin->opt_enableMarkerlessCoordinates;
+	} else if (id == plugin->hotkeyId_toggleAutoSourceSwitching) {
+		plugin->opt_enableAutoSourceSwitching = !plugin->opt_enableAutoSourceSwitching;
+	} else {
 		// unknown hotkey
 	}
 	//
 	ReleaseMutex(plugin->mutex);
 }
 //---------------------------------------------------------------------------
-
-
 
 
 
@@ -164,20 +170,13 @@ obs_properties_t *plugin_properties(void* data)
 	//
 	obs_properties_add_bool(props, SETTING_zcPreserveAspectRatio, TEXT_zcPreserveAspectRatio);
 	//
-	obs_properties_add_text(props, SETTING_zcForcedOutputRes, TEXT_zcForcedOutputRes, OBS_TEXT_DEFAULT);
+	obs_properties_add_text(props, SETTING_zcOutputSize, TEXT_zcOutputSize, OBS_TEXT_DEFAULT);
 
-/*
-	obs_properties_add_int(props, SETTING_zcMarkerlessSourceIndex, TEXT_zcMarkerlessSourceIndex, 0, DefMaxSources-1,1);
+	obs_properties_add_bool(props, SETTING_enableMarkerlessCoordinates, TEXT_enableMarkerlessCoordinates);
 	char labelWithInfo[80];
-//	sprintf(labelWithInfo, "%s (%d,%d,%d,%d)", TEXT_zcMarkerlessCoords, plugin->lookingx1, plugin->lookingy1, plugin->lookingx2 == plugin->workingWidth-1 ? -1 : plugin->lookingx2, plugin->lookingy2 == plugin->workingHeight-1 ? -1 : plugin->lookingy2);	
-	sprintf(labelWithInfo, "%s (x1,y1,x2,y2)", TEXT_zcMarkerlessCoords);
-	obs_properties_add_text(props, SETTING_zcMarkerlessCoords, labelWithInfo, OBS_TEXT_DEFAULT);
-	//	obs_properties_add_button(props, SETTING_zcMarkerlessCoordsButton, TEXT_zcMarkerlessCoordsButton, onMarkerlessCoordsButtonPress);
-*/
- 	char labelWithInfo[80];
 	sprintf(labelWithInfo, "%s (source#,zoom) | ...", TEXT_zcMarkerlessCycleList);
 	obs_properties_add_text(props, SETTING_zcMarkerlessCycleList, labelWithInfo, OBS_TEXT_DEFAULT);
-
+	obs_properties_add_int(props, SETTING_markerlessCycleIndex, TEXT_markerlessCycleIndex, 0, 100, 1);
 	//
 	p = obs_properties_add_list(props, SETTING_COLOR_TYPE, TEXT_COLOR_TYPE, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_STRING);
 	obs_property_list_add_string(p, obs_module_text("Green"), "green");
@@ -197,6 +196,8 @@ obs_properties_t *plugin_properties(void* data)
 	obs_properties_add_int_slider(props, SETTING_rmStageShrink, TEXT_rmStageShrink,1,16,1);
 
 	// add properites for sources and callbacks when they are modified
+	obs_properties_add_bool(props, SETTING_enableAutoSourceSwitching, TEXT_enableAutoSourceSwitching);
+	obs_properties_add_int(props, SETTING_initialViewSourceIndex, TEXT_initialViewSourceIndex, 0, 10, 1);
 	p = obs_properties_add_int(props, SETTING_srcN, TEXT_srcN, 1, DefMaxSources, 1);
 	obs_property_set_modified_callback(p, OnPropertyNSrcModifiedCallback);
 	for (int i = 0; i < DefMaxSources; i++) {
@@ -244,13 +245,13 @@ void plugin_defaults(obs_data_t *settings)
 	obs_data_set_default_string(settings, SETTING_zcMode, SETTING_Def_zcMode);
 	obs_data_set_default_int(settings, SETTING_zcMaxZoom, 0);
 	//
-	obs_data_set_default_string(settings, SETTING_zcForcedOutputRes, SETTING_Def_zcForcedOutputRes);
+	obs_data_set_default_string(settings, SETTING_zcOutputSize, SETTING_Def_zcOutputSize);
 	//
-	/*
-	obs_data_set_default_int(settings, SETTING_zcMarkerlessSourceIndex, 0);
-	obs_data_set_default_string(settings, SETTING_zcMarkerlessCoords, SETTING_Def_zcMarkerlessCoords);
-	*/
+	obs_data_set_default_int(settings, 	SETTING_initialViewSourceIndex, SETTING_DEF_initialViewSourceIndex);
+	obs_data_set_default_bool(settings, SETTING_enableAutoSourceSwitching, SETTING_Def_enableAutoSourceSwitching);
+	obs_data_set_default_bool(settings, SETTING_enableMarkerlessCoordinates, SETTING_Def_enableMarkerlessCoordinates);
 	obs_data_set_default_string(settings, SETTING_zcMarkerlessCycleList, SETTING_Def_zcMarkerlessCycleList);
+	obs_data_set_default_int(settings, SETTING_markerlessCycleIndex, SETTING_Def_markerlessCycleIndex);
 	//
 	obs_data_set_default_int(settings, SETTING_srcN, SETTING_Def_srcN);
 }
@@ -267,7 +268,7 @@ void plugin_update(void *data, obs_data_t *settings) {
 	// reload any changed settings vals
 	plugin->updateSettingsOnChange(settings);
 
-	// ATTN: we could maybe call HERE the call recreateStagingMemoryIfNeeded RATHER than in tick()
+	// ATTN: we could maybe call HERE the call recheckSizeAndAdjustIfNeeded RATHER than in tick()
 }
 //---------------------------------------------------------------------------
 
@@ -282,6 +283,7 @@ void plugin_update(void *data, obs_data_t *settings) {
 //---------------------------------------------------------------------------
 void plugin_load(void *data, obs_data_t *settings) {
 	JrPlugin* plugin = (JrPlugin*) data;
+
 	plugin->reRegisterHotkeys();
 }
 
@@ -293,11 +295,8 @@ void plugin_destroy(void *data)
 	WaitForSingleObject(plugin->mutex, INFINITE);
 
 	obs_enter_graphics();
-		plugin->freeBeforeReallocateEffectsAndTexRender();
-		plugin->freeBeforeReallocateFilterTextures();
+		plugin->freeBeforeReallocateEffects();
 	obs_leave_graphics();
-
-	plugin->freeBeforeReallocateNonGraphicData();
 
 	ReleaseMutex(plugin->mutex);
 	CloseHandle(plugin->mutex);
@@ -330,7 +329,7 @@ void *plugin_create(obs_data_t *settings, obs_source_t *context)
 	}
 
 	// one time startup init outside graphics context
-	plugin->initFilterOutsideGraphicsContext(context);
+	plugin->initFilterOutsideGraphicsContext();
 
 	// update? im not sure this is ready yet..
 	if (true) {
@@ -401,11 +400,11 @@ void plugin_enum_sources(void *data, obs_source_enum_proc_t enum_callback, void 
 	int numSources = strackerp->getSourceCount();
 
 	for (int i = 0; i < numSources; i++) {
-		obs_source_t *src = strackerp->getFullSourceFromWeakSourcepByIndex(i);
+		obs_source_t *src = strackerp->borrowFullSourceFromWeakSourcepByIndex(i);
 		if (!src)
 			continue;
 		enum_callback(plugin->context, src, param);
-		strackerp->freeFullSource(src);	src = NULL;
+		TrackedSource::releaseBorrowedFullSource(src);	src = NULL;
 	}
 
 	plugin->in_enumSources = false;
@@ -445,14 +444,14 @@ enum gs_color_space plugin_get_color_space(void *data, size_t count,  const enum
 		return GS_CS_SRGB;
 	}
 	//
-	obs_source_t* source = tsourcep->getFullSourceFromWeakSource();
+	obs_source_t* source = tsourcep->borrowFullSourceFromWeakSource();
 	if (!source) {
 		//mydebug("ERROR: NULL source in plugin_get_color_space.");
 		return GS_CS_SRGB;
 	}
 	const enum gs_color_space source_space = obs_source_get_color_space(source,	OBS_COUNTOF(potential_spaces), potential_spaces);
 
-	plugin->stracker.freeFullSource(source); source = NULL;
+	TrackedSource::freeFullSource(source); source = NULL;
 	return source_space;
 }
 //---------------------------------------------------------------------------
@@ -463,21 +462,21 @@ enum gs_color_space plugin_get_color_space(void *data, size_t count,  const enum
 uint32_t plugin_width(void *data)
 {
 	JrPlugin *plugin = (JrPlugin*) data;
-	if (plugin->opt_filterBypass) {
+	if (false && plugin->opt_filterBypass) {
 		// when bypassing, pass through original dimension and dont obey any forced output size
-		return (uint32_t)plugin->workingWidth;
+		return (uint32_t)plugin->outputWidthAutomatic;
 	}
-	return (uint32_t)plugin->outWidth;
+	return (uint32_t)plugin->outputWidthPlugin;
 }
 
 uint32_t plugin_height(void *data)
 {
 	JrPlugin *plugin = (JrPlugin*) data;
-	if (plugin->opt_filterBypass) {
+	if (false && plugin->opt_filterBypass) {
 		// when bypassing, pass through original dimension and dont obey any forced output size
-		return (uint32_t)plugin->workingHeight;
+		return (uint32_t)plugin->outputHeightAutomatic;
 	}
-	return (uint32_t)plugin->outHeight;
+	return (uint32_t)plugin->outputHeightPlugin;
 }
 //---------------------------------------------------------------------------
 
@@ -518,7 +517,7 @@ bool obs_module_load(void)
 	autoZoomSourcePlugin.version = 2;
 	autoZoomSourcePlugin.type = OBS_SOURCE_TYPE_INPUT;
 	// note that the OBS_SOURCE_COMPOSITE flag below is supposed to be used by sources that composite multiple children, which we seem to do -- not sure its needed though
-	autoZoomSourcePlugin.output_flags = OBS_SOURCE_VIDEO | OBS_SOURCE_SRGB | OBS_SOURCE_CUSTOM_DRAW | OBS_SOURCE_DO_NOT_DUPLICATE | OBS_SOURCE_COMPOSITE;
+	autoZoomSourcePlugin.output_flags = OBS_SOURCE_VIDEO | OBS_SOURCE_SRGB | OBS_SOURCE_CUSTOM_DRAW | OBS_SOURCE_COMPOSITE /*| OBS_SOURCE_DO_NOT_DUPLICATE*/;
 	autoZoomSourcePlugin.get_name = plugin_name;
 	autoZoomSourcePlugin.create = plugin_create;
 	autoZoomSourcePlugin.destroy = plugin_destroy;
@@ -533,6 +532,7 @@ bool obs_module_load(void)
 	autoZoomSourcePlugin.get_height = plugin_height;
 	autoZoomSourcePlugin.enum_active_sources = plugin_enum_sources;
 	autoZoomSourcePlugin.audio_render = plugin_audio_render;
+	autoZoomSourcePlugin.icon_type = OBS_ICON_TYPE_CAMERA;
 
 	// register it with obs
 	obs_register_source(&autoZoomSourcePlugin);
