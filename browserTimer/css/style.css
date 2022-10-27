@@ -284,6 +284,7 @@ body.light-theme .buttons .button:hover {
 
 
 #flipdown_done {
+	 -webkit-text-stroke: 1px white;
 	 text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
 	 font-size: 3rem;
 	 padding-top: 0.5em;

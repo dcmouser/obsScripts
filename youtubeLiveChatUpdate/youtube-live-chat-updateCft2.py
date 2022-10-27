@@ -94,6 +94,7 @@ def doUpdateUrl(showError):
     # NOTE source must be released or crash on exit
     if apikey and source is not None:
         url = YOUTUBE_QUERY_URL.format(channelid=channelid, apikey=apikey)
+        vid = ""
         try:
             with urllib.request.urlopen(url) as response:
                 data = response.read()
@@ -110,9 +111,9 @@ def doUpdateUrl(showError):
                 else:
                     livechat = NO_STREAM
                     # obs.script_log(obs.LOG_DEBUG, "No active stream, skipping update.")
-                    print("ATTN: No active stream data found at '" + url + "', skipping update.")
+                    print("ATTN2: No active stream data found at '" + url + "', skipping update.")
                     # test pretend there is a url
-                    #livechat = "https://gaming.youtube.com/live_chat?v=VIDEOIDHERETEST"
+                    # livechat = "https://gaming.youtube.com/live_chat?v=H5Cp9v_3O3o"
 
                 if livechat != NO_STREAM:
                 	settings = obs.obs_data_create()
@@ -125,6 +126,9 @@ def doUpdateUrl(showError):
                 		obs.obs_data_set_string(settings, "url", livechat)
                 		obs.obs_source_update(source, settings)
                 		print("ATTN: " + "Set livechat url to " + livechat)
+                		# new, set it in script properties for easier visibility
+                		rememberLastVideoUrl(vid)
+
                 	else:
                 		#print("ATTN:Livechat url remains unchanged, doing noting: " + livechat + " vs " + livechatOld)
                 		print("ATTN:Livechat url remains unchanged, nothing to do.")
@@ -141,9 +145,18 @@ def doUpdateUrl(showError):
 
         obs.obs_source_release(source)
 
+
+
+
+
+
+
 def refresh_pressed(props, prop):
     print("Refresh pressed")
     doUpdateUrl(True)
+
+
+
 
 def on_frontend_event(event):
     #print ("ATTN: on_frontend_event 1")
@@ -226,6 +239,10 @@ def script_update(settings):
     global apikey
     global source_name
     global delay
+    
+    global globalScriptSettingsPointer
+    
+    globalScriptSettingsPointer = settings
 
     channelid    = obs.obs_data_get_string(settings, "channelid")
     apikey       = obs.obs_data_get_string(settings, "apikey")
@@ -257,10 +274,34 @@ def script_properties():
     obs.obs_properties_add_button(props, "button", "Refresh", refresh_pressed)
     return props
 
+
+
+def rememberLastVideoUrl(vid):
+    # obs.obs_data_set_string(settings, "lastVideoId",livechat)
+
+    return
+    # send custom signal
+    sh = obs.obs_get_signal_handler()
+    cd = obs.calldata_create()
+    obs.calldata_set_string(cd,"vid", vid)
+    obs.signal_handler_signal(sh, "youTubeVideoIdFound", cd)
+
+
+
 def script_load(settings):
-    # TEST
     obs.obs_frontend_add_event_callback(on_frontend_event)
+    
+    
+    return
+    print ("Setting up callback.")
+    sh = obs.obs_get_signal_handler()
+    obs.signal_handler_add(sh, "void youTubeVideoIdFound(string vid)")
+    obs.signal_handler_add(sh, "youTubeVideoIdFound")
+    obs.signal_handler_connect(sh, "youTubeVideoIdFound", callbackYoutubeVideoIdFound)
+    #obs.signal_handler_connect_global(sh,callbackSignalGlobal)
     pass
+
+
 
 
 
@@ -271,3 +312,17 @@ def script_unload():
     obs.obs_frontend_remove_event_callback(on_frontend_event)
     # removeUpdateUrlTimers()
 
+
+
+def callbackYoutubeVideoIdFound(cd):
+	  # this doesnt work i can't get the cast to work
+
+    return
+    vid =  "abc"
+    vid = obs.calldata_string(cd,"vid")
+    #retv = obs.calldata_get_string(cd,"vid",vid)
+    print("ATTN: test in callbackYoutubeVideoIdFound: " + vid)
+
+
+def callbackSignalGlobal(signalName, cd):
+		print("ATTN: in callbackSignalGlobal: " + signalName)

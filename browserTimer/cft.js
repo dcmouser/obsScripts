@@ -18,7 +18,7 @@
   			if (name=="countdown") {
   				var mins = parseFloat(value);
 					if (isNaN(mins)) {
-						doShowError("ERROR: countdown value should be specified as an floating point # (found: '" + value+"').");
+						doShowError("ERROR: countdown value should be specified as an floating point # (found: '" + value+"'); specifying minutes.");
 						return;
 					}
   				setupTimedBreak(mins);
@@ -29,7 +29,7 @@
   			else if (name=="countup") {
   				var mins = parseFloat(value);
 					if (isNaN(mins)) {
-						doShowError("ERROR: countdown value should be specified as a floating point # (found: '" + value+"').");
+						doShowError("ERROR: countup value should be specified as a floating point # (found: '" + value+"')<br/>that specifies when countup timer expires.<br/>Use zero for no end.");
 						return;
 					}
 					modeCountUp = true;
