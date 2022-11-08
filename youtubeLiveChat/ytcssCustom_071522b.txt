@@ -1,0 +1,73 @@
+﻿body {
+	background-color: rgb(0, 0, 0, 0);
+	margin: 0px auto;
+	overflow: hidden;
+} 
+
+
+ 
+#message.yt-live-chat-text-message-renderer {
+	color: #fff;
+	font-size: 34px;
+	font-family: 'Calibri', Arial;
+	    line-height: 34px !important;
+}
+
+#contents.yt-live-chat-text-message-renderer {
+margin-top: 00px;
+}
+
+
+
+yt-live-chat-header-renderer.yt-live-chat-renderer {
+	display:none;
+}
+
+#panel-pages.yt-live-chat-renderer {
+	display:none;
+}
+
+
+
+yt-live-chat-text-message-renderer {
+    font-size: 18px;
+    line-height: 23px !important;
+}
+
+#contents.yt-live-chat-item-list-renderer {
+	right: -25px;
+	top:0px;
+}
+
+
+
+
+#card {
+	display:none;
+}
+
+
+yt-live-chat-viewer-engagement-message-renderer {
+	display:none;
+}
+
+
+
+.yt-img-shadow {
+height: 40px;
+width: 40px;
+}
+
+#author-photo.yt-live-chat-text-message-renderer {
+margin-top: 0px;
+margin-left: -10px;
+margin-right: 15px;
+}
+
+
+
+
+
+
+/* https://gaming.youtube.com/live_chat?v=vHb932Vzxl0 */
+
